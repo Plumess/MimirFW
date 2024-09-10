@@ -91,7 +91,6 @@ project-root/
 └── main.py
 ```
 
-
 Project Activity
 ------
 
