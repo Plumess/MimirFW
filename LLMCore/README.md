@@ -140,3 +140,36 @@
 ### **插件接口标准化**
 
 所有插件必须实现该接口的基本方法，包括初始化、执行和清理等步骤。框架在适当的时候调用这些方法，确保插件的正常运行。
+
+## **代码结构初步设计**：
+
+```
+LLMCore/
+│
+├── models/                           # 模型管理
+│   ├── qwen_model.py                 # Qwen模型调用逻辑
+│   ├── llama_model.py                # LLAMA模型调用逻辑
+│   ├── api_model.py                  # 云端API模型调用逻辑（例如OpenAI）
+│   └── model_manager.py              # 模型管理器，统一接口调用
+│
+├── identity_rules/                   # 身份与对话规则模块
+│   ├── role_manager.py               # 管理不同模型的身份和角色
+│   └── dialogue_rules.py             # 定义对话规则和身份切换逻辑
+│
+├── background_rules/                 # 背景规则模块
+│   └── background_manager.py         # 管理应用场景的背景规则
+│
+├── dynamic_knowledge/                # 动态知识库模块
+│   ├── knowledge_manager.py          # 动态知识库的管理
+│   ├── memory.py                     # 场景中的操作记忆和状态
+│   ├── knowledge_update.py           # 知识库的动态更新逻辑
+│   └── rollback_reset.py             # 场景状态回退和重置功能
+│
+├── dialogue_flow/                    # 对话流管理模块
+│   └── flow_manager.py               # 管理对话的流程，包括上下文跟踪
+│
+├── plugins/                          # 插件模块
+│   └── plugin_manager.py             # 动态加载和管理插件
+│
+└── llmcore.py                           # 主要入口，初始化各个模块并启动LLMCore
+```
