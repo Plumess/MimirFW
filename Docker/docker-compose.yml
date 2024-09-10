@@ -1,0 +1,23 @@
+services:
+  mimirfw:
+    build:
+      context: ../
+      dockerfile: Docker/Dockerfile
+      target: ${BUILD_TARGET:-full_build}  # 动态选择构建阶段，默认为 full_build
+    image: mimirfw:latest
+    container_name: mimirfw
+    volumes:
+      - ${LLMCORE_VOLUME:-../LLMCore}:/app/LLMCore  # 动态挂载 LLMCore
+      - ${GAMELOGIC_VOLUME:-../GameLogic}:/app/GameLogic  # 动态挂载 GameLogic，若-空则不挂载
+      - ${ADAPTER_VOLUME:-../Adapter}:/app/Adapter  # 动态挂载 Adapter，若-空则不挂载
+    # 指定使用nvidia container toolkit
+    runtime: nvidia
+    # 指定docker可以使用的宿主机GPU资源
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+    # 增加共享内存大小
+    shm_size: '16gb'
+    # command: python train.py
+    command: sleep infinity
+
+# docker-compose up -d --build

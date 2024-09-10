@@ -3,3 +3,9 @@
 *.pptx
 *.docx
 *.pdf
+*.jpg
+*.png
+
+# Plume ------------------
+assets/plume/*
+docs/plume/*
