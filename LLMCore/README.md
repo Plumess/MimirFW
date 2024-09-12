@@ -185,4 +185,3 @@ LLMCore/
 │   └── plugin_manager.py             # 动态加载和管理插件
 │
 └── llmcore.py                        # 主要入口，初始化各个模块并启动LLMCore
-```
