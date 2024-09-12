@@ -27,7 +27,8 @@ FROM base AS llm_stage
 COPY ../LLMCore /app/LLMCore
 
 # 安装 LLM 相关的依赖
-# RUN pip install transformers openai  # 示例依赖，替换为你的 LLM 依赖
+# 向量数据库 faiss
+RUN pip install faiss-gpu
 
 # 暴露 LLM 相关服务的端口
 # EXPOSE 5000
