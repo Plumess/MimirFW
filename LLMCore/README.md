@@ -155,7 +155,9 @@ LLMCore/
 ├── models/                           # 模型管理
 │   ├── pretrained                    # 本地模型存放
 │   │   ├── qwen
+│   │   ├── llama
 │   │   ├── ……
+│   │   ├── customs
 │   │   └── downloader.py             # 官方模型下载器
 │   ├── qwen                          # Qwen模型调用逻辑
 │   │   ├── ……
