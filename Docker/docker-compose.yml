@@ -1,23 +1,51 @@
 services:
-  mimirfw:
+  llmcore:
     build:
-      context: ../
-      dockerfile: Docker/Dockerfile
-      target: ${BUILD_TARGET:-full_build}  # 动态选择构建阶段，默认为 full_build
-    image: mimirfw:latest
-    container_name: mimirfw
+      context: ../LLMCore/  # 指定docker用到的上下文目录 
+      dockerfile: ./LLMCore/Dockerfile
+    image: llmcore:latest
+    container_name: llmcore
     volumes:
       - ${LLMCORE_VOLUME:-../LLMCore}:/app/LLMCore  # 动态挂载 LLMCore
-      - ${GAMELOGIC_VOLUME:-../GameLogic}:/app/GameLogic  # 动态挂载 GameLogic，若-空则不挂载
-      - ${ADAPTER_VOLUME:-../Adapter}:/app/Adapter  # 动态挂载 Adapter，若-空则不挂载
+    networks:
+      - mimirnet  # 统一使用自建的 MimirNet 网络通信
+    ports:
+    - 24910:24910
     # 指定使用nvidia container toolkit
     runtime: nvidia
-    # 指定docker可以使用的宿主机GPU资源
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=0
     # 增加共享内存大小
     shm_size: '16gb'
-    # command: python train.py
+    env_file:
+      - ./LLMCore/llmcore.env
+    restart: unless-stopped
     command: sleep infinity
+
+  weaviate:
+    build:
+      context: ./Weaviate
+      dockerfile: ./Weaviate/Dockerfile
+    image: weaviate:latest
+    container_name: weaviate
+    volumes:
+    - ${WEAVIATE_DATA_VOLUME:-./Weaviate/data}:/var/lib/weaviate  # 动态挂载 Weaviate Data
+    networks:
+      - mimirnet
+    ports:
+    - 24980:8080
+    - 50051:50051
+    restart: unless-stopped
+    env_file:
+      - ./Weaviate/weaviate.env
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - '8080'
+      - --scheme
+      - http
+
+networks:
+  mimirnet:
+    driver: bridge
 
 # docker-compose up -d --build
