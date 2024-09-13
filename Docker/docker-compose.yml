@@ -1,8 +1,8 @@
 services:
   llmcore:
     build:
-      context: ../LLMCore/  # 指定docker用到的上下文目录 
-      dockerfile: ./LLMCore/Dockerfile
+      context: ../LLMCore
+      dockerfile: ../Docker/LLMCore/Dockerfile
     image: llmcore:latest
     container_name: llmcore
     volumes:
@@ -23,7 +23,7 @@ services:
   weaviate:
     build:
       context: ./Weaviate
-      dockerfile: ./Weaviate/Dockerfile
+      dockerfile: Dockerfile
     image: weaviate:latest
     container_name: weaviate
     volumes:
@@ -32,7 +32,7 @@ services:
       - mimirnet
     ports:
     - 24980:8080
-    - 50051:50051
+    - 50052:50051
     restart: unless-stopped
     env_file:
       - ./Weaviate/weaviate.env

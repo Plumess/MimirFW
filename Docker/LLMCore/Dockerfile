@@ -10,7 +10,7 @@ LABEL maintainer="Plumess"
 WORKDIR /app
 
 # 复制 LLM 代码到工作目录
-COPY ../../LLMCore /app/LLMCore
+COPY . /app/LLMCore
 
 # 安装基础依赖
 RUN pip install --upgrade pip

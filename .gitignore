@@ -5,6 +5,7 @@
 *.pdf
 LLMCore/pretrained/embedding/*
 LLMCore/pretrained/models/*
+Docker/Weaviate/data/*
 
 # Plume ------------------
 assets/plume/*
