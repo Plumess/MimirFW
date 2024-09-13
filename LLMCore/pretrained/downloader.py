@@ -2,102 +2,87 @@ import os
 from modelscope import snapshot_download
 
 class ModelDownloader:
-    def __init__(self, model_dict=None):
-        # 默认支持的模型字典
-        self.model_dict = model_dict or {
-            "Qwen": {
-                "2-instruct-AWQ": {
-                    "1.5B": "qwen/Qwen2-1.5B-Instruct-AWQ",
-                    "7B": "qwen/Qwen2-7B-Instruct-AWQ",
-                    "72B": "qwen/Qwen2-72B-Instruct-AWQ",
-                },
-                "2-instruct": {
-                    "1.5B": "qwen/qwen2-1.5b-instruct",
-                    "7B": "qwen/qwen2-7b-instruct",
-                    "72B": "qwen/qwen2-72b-instruct",
-                },
-            },
-            "Llama": {
-                "3.1": {
-                    "8B": "LLM-Research/Meta-Llama-3.1-8B-Instruct",
-                    "70B": "LLM-Research/Meta-Llama-3.1-70B-Instruct"
-                }
-            }
-        }
+    def check_exists(self, model_path):
+        """检查模型或 embedding 是否存在"""
+        return os.path.exists(model_path)
 
-    def get_modelscope_id(self, key):
-        """根据传入的模型 key 获取 modelscope 的模型 id"""
-        model_name, version, size = key.get('name'), key.get('version'), key.get('size')
-        custom_model_id = key.get('custom_model_id')
-        
-        # 如果是自定义模型并传入了 model id
-        if custom_model_id:
-            return custom_model_id
-        
-        # 如果是默认支持的模型
-        if model_name in self.model_dict:
-            if version in self.model_dict[model_name]:
-                if size in self.model_dict[model_name][version]:
-                    return self.model_dict[model_name][version][size]
-        return None
-
-    def check_model_exists(self, key, save_dir):
-        """检查模型文件夹是否已经存在"""
-        model_dir = f"{key['name']}-{key['version']}-{key['size']}"
-        model_path = os.path.join(save_dir, model_dir)
-        return os.path.exists(model_path), model_dir
+    def get_model_folder(self, model_id):
+        """从 ModelScope ID 获取文件夹名称，使用 id 的后半部分（模型名）作为文件夹名"""
+        return model_id.split('/')[-1]  # 返回 ID 的后半部分
 
     def download_with_modelscope(self, model_id, model_folder):
         """使用 ModelScope 的 Python API 下载模型到指定文件夹"""
         try:
+            print(f"开始下载模型 {model_id} 到文件夹 {model_folder}")
             # 直接调用 snapshot_download 进行模型下载
             model_dir = snapshot_download(model_id, local_dir=model_folder)
+            print(f"模型 {model_id} 下载完成，存储路径: {model_dir}")
             return {"error": False, "message": f"模型 {model_id} 已成功下载到 {model_dir}"}
         except Exception as e:
+            print(f"模型 {model_id} 下载失败，错误: {str(e)}")
             return {"error": True, "message": f"模型 {model_id} 下载失败，错误: {str(e)}"}
 
-    def download_model(self, key):
-        """根据 key 检查模型存在性并下载，支持自定义模型下载"""
-        model_name = key['name']
+    def download_model(self, model_id, embedding_id=None):
+        """根据传递的 model_id 和 embedding_id 下载模型和 embedding"""
         
-        # 确定存放目录的基础路径
-        if model_name.lower() == "qwen":
-            save_dir = "./qwen"
-        elif model_name.lower() == "llama":
-            save_dir = "./llama"
-        else:
-            save_dir = "./customs"
+        # 自定义模型和 embedding
+        model_folder = os.path.join("./models", self.get_model_folder(model_id))
+        embedding_folder = os.path.join("./embedding", self.get_model_folder(embedding_id))
 
-        # 创建存放目录
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
+        # 检查主模型是否存在
+        model_exists = self.check_exists(model_folder)
 
-        # 根据 key 构建模型文件夹
-        model_exists, model_dir = self.check_model_exists(key, save_dir)
-        model_folder = os.path.join(save_dir, model_dir)
+        # 检查 embedding 是否存在
+        embedding_exists = self.check_exists(embedding_folder)
 
-        # 如果模型已经存在，直接返回成功
-        if model_exists:
-            return {"error": False, "message": f"模型文件夹 {model_dir} 已确认存在"}
+        # 如果主模型不存在，则下载
+        if not model_exists:
+            print(f"主模型不存在，开始下载...")
+            result = self.download_with_modelscope(model_id, model_folder)
+            if result['error']:
+                return result
 
-        # 使用 ModelScope Python API 下载模型到该文件夹
-        model_id = self.get_modelscope_id(key)
-        if model_id:
-            return self.download_with_modelscope(model_id, model_folder)
-        else:
-            return {"error": True, "message": "No matching model ID found for the given key."}
+        # 如果 embedding 不存在，则下载
+        if embedding_id and not embedding_exists:
+            print(f"embedding 模型不存在，开始下载到 {embedding_folder}...")
+            embedding_result = self.download_with_modelscope(embedding_id, embedding_folder)
+            if embedding_result['error']:
+                return embedding_result
+
+        return {"error": False, "message": "主模型和 embedding 模型都已成功下载或已存在"}
 
 # 示例用法
 if __name__ == "__main__":
-    # 模拟从前端传入的 key（选择预设模型）
-    key = {
-        "name": "Qwen",
-        "version": "2-instruct-AWQ",
-        "size": "1.5B"
+    # 模拟前端传入的预设字典
+    model_dict = {
+        "Qwen2-1.5B-Instruct": "qwen/qwen2-1.5b-instruct",
+        "Qwen2-1.5B-Instruct-AWQ": "qwen/Qwen2-1.5B-Instruct-AWQ",
+        "Qwen2-7B-Instruct": "qwen/qwen2-7b-instruct",
+        "Qwen2-7B-Instruct-AWQ": "qwen/Qwen2-7B-Instruct-AWQ",
+        "Qwen2-72B-Instruct": "qwen/qwen2-72b-instruct",
+        "Qwen2-72B-Instruct-AWQ": "qwen/Qwen2-72B-Instruct-AWQ",
+        "Llama3.1-8B-Instruct": "LLM-Research/Meta-Llama-3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct": "LLM-Research/Meta-Llama-3.1-70B-Instruct"
     }
 
+    embedding_dict = {
+        # "xiaobu-embedding-v2": "Tolk8888/xiaobu-embedding-v2",
+        "xiaobu-embedding-v2": "maple77/xiaobu-embedding-v2",
+        "conan-embedding-v1": "KeplerAI/conan-embedding-v1-onnx",
+        "zpoint_large_embedding_zh": "maple77/zpoint_large_embedding_zh"
+    }
+
+    # 假设前端传入了模型和 embedding 的 key
+    model_key = "Qwen2-1.5B-Instruct-AWQ"
+    embedding_key = "xiaobu-embedding-v2"
+
+    # 获取对应的 ModelScope ID
+    model_id = model_dict.get(model_key)
+    embedding_id = embedding_dict.get(embedding_key)
+
+    # 创建下载器实例
     downloader = ModelDownloader()
 
-    # 下载预设模型到 qwen 目录
-    result = downloader.download_model(key)
+    # 下载模型和 embedding
+    result = downloader.download_model(model_id, embedding_id)
     print(result)

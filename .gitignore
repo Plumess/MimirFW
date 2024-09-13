@@ -3,9 +3,8 @@
 *.pptx
 *.docx
 *.pdf
-LLMCore/pretrained/customs/*
-LLMCore/pretrained/llama/*
-LLMCore/pretrained/qwen/*
+LLMCore/pretrained/embedding/*
+LLMCore/pretrained/models/*
 
 # Plume ------------------
 assets/plume/*
