@@ -117,7 +117,7 @@ def main():
             # 更新提示模板，包含上下文
             prompt_with_context = PromptTemplate(
                 input_variables=["context", "question"],
-                template="基于以下内容：\n{context}\n请回答问题：{question}"
+                template="基于以下内容：\n{context}\n\n\n请回答问题：{question}"
             )
             chain_with_context = prompt_with_context | llm
             response = chain_with_context.invoke({"context": context, "question": question})
