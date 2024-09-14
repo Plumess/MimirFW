@@ -51,7 +51,7 @@ def main():
             "text-generation",
             model=model,
             tokenizer=tokenizer,
-            max_length=1024,  # 限制全文的token长度（包含输入和回答）
+            # max_length=1024,  # 限制全文的token长度（包含输入和回答）
             max_new_tokens=512,  # 设置回答生成的长度
             truncation=True
         )
@@ -112,15 +112,20 @@ def main():
             context = "\n".join([doc.page_content for doc in retrieved_docs])
 
         # 7. 使用模型生成响应
-        print("使用模型生成响应...")
+        print("\n使用模型生成响应...")
+        # 设置最大展示长度
+        max_display_length = 200  # 展示的最大字符数
+        display_context = context[:max_display_length]  # 截取用于展示的部分
+
         if context:
-            # 更新提示模板，包含上下文
+            # 更新提示模板，包含截取后的展示部分
             prompt_with_context = PromptTemplate(
-                input_variables=["context", "question"],
-                template="基于以下内容：\n{context}\n\n\n请回答问题：{question}"
+                input_variables=["display_context", "question"],
+                template="基于以下数据库内容：\n{display_context}\n……\n回答问题：\n{question}"
             )
             chain_with_context = prompt_with_context | llm
-            response = chain_with_context.invoke({"context": context, "question": question})
+            # 调用模型时，传递完整的 context
+            response = chain_with_context.invoke({"display_context": display_context, "question": question, "context": context})
         else:
             # 无上下文时直接生成响应
             response = chain.invoke({"question": question})
@@ -135,6 +140,7 @@ def main():
         # 确保 Weaviate 客户端连接被关闭
         if weaviate_client is not None:
             weaviate_client.close()
+            print()
             print("Weaviate 客户端连接已关闭。")
 
 if __name__ == "__main__":
