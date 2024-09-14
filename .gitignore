@@ -5,7 +5,10 @@
 *.pdf
 LLMCore/pretrained/embedding/*
 LLMCore/pretrained/models/*
+LLMCore/logs/*
 Docker/Weaviate/data/*
+.cache
+__pycache__
 
 # Plume ------------------
 assets/plume/*

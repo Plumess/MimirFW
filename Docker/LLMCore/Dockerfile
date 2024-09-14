@@ -1,7 +1,8 @@
-# ==============================
+# syntax=docker/dockerfile:1.4
+
 # 基础阶段: 使用 LangChain 基础镜像
 # ==============================
-FROM langchain/langchain:latest AS base
+FROM python:3.11-slim AS base
 
 # 维护者信息
 LABEL maintainer="Plumess"
@@ -9,25 +10,38 @@ LABEL maintainer="Plumess"
 # 设置工作目录
 WORKDIR /app
 
-# 复制 LLM 代码到工作目录
-COPY . /app/LLMCore
+# 复制 requirements.txt
+COPY Docker/LLMCore/requirements.txt .
+
+# 升级 pip
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip
 
 # 安装基础依赖
-RUN pip install --upgrade pip
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
+
+# 复制应用代码
+COPY LLMCore /app/LLMCore
+COPY config /app/config
 
 # ==============================
 # 开发/测试阶段: 包含开发工具和依赖
 # ==============================
 FROM base AS development
 
-# 安装开发环境的额外依赖
+# 复制 dev-requirements.txt
+COPY Docker/LLMCore/dev-requirements.txt .
+
+# 安装开发环境的依赖
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/torch \
+    pip install -r dev-requirements.txt
 
 # ==============================
 # 生产阶段: 最终的轻量化运行环境
 # ==============================
 FROM base AS production
-
-# 仅安装生产所需依赖
 
 # 示意暴露服务端口（并未实际映射）
 EXPOSE 24910

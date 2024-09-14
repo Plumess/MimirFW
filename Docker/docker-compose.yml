@@ -1,18 +1,27 @@
 services:
   llmcore:
     build:
-      context: ../LLMCore
-      dockerfile: ../Docker/LLMCore/Dockerfile
+      context: ../
+      dockerfile: Docker/LLMCore/Dockerfile
+      target: development  # 指定构建到 development 阶段
+      args:
+        # Enable BuildKit inline cache
+        BUILDKIT_INLINE_CACHE: '1'
     image: llmcore:latest
     container_name: llmcore
     volumes:
       - ${LLMCORE_VOLUME:-../LLMCore}:/app/LLMCore  # 动态挂载 LLMCore
+      - ${GLOBAL_CONFIG_VOLUME:-../config}:/app/config
     networks:
       - mimirnet  # 统一使用自建的 MimirNet 网络通信
     ports:
-    - 24910:24910
-    # 指定使用nvidia container toolkit
-    runtime: nvidia
+      - 24910:24910
+    # 指定使用 NVIDIA Container Toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
     # 增加共享内存大小
     shm_size: '16gb'
     env_file:
@@ -22,12 +31,12 @@ services:
 
   weaviate:
     build:
-      context: ./Weaviate
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: Docker/Weaviate/Dockerfile
     image: weaviate:latest
     container_name: weaviate
     volumes:
-    - ${WEAVIATE_DATA_VOLUME:-./Weaviate/data}:/var/lib/weaviate  # 动态挂载 Weaviate Data
+    - ${WEAVIATE_DATA_VOLUME:-./Weaviate/data}:/var/lib/weaviate
     networks:
       - mimirnet
     ports:
@@ -48,4 +57,7 @@ networks:
   mimirnet:
     driver: bridge
 
-# docker-compose up -d --build
+# 如果没有大改，只是加了一些环境
+# docker-compose up -d
+# 如果大改结构或者处于开发阶段，最好重构一下
+# docker-compose up -d --build && docker image prune -f

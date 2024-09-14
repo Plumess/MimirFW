@@ -1,0 +1,8 @@
+LLMCore/pretrained/embedding
+LLMCore/pretrained/models
+LLMCore/logs
+__pycache__
+.cache
+assets
+docs
+*.md
