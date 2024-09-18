@@ -21,7 +21,6 @@ services:
     shm_size: '16gb'
     env_file:
       - ./LLMCore/llmcore.env
-      - ./device.env
     restart: unless-stopped
     command: sleep infinity
     environment:
