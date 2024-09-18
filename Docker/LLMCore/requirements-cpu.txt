@@ -1,5 +1,3 @@
-# PyTorch with CUDA 12.1 (using the specified index URL)
---find-links https://download.pytorch.org/whl/cu121
 torch==2.3.1
 torchvision==0.18.1
 torchaudio==2.3.1
@@ -18,5 +16,3 @@ sentence-transformers
 weaviate-client==4.8.1
 # AWQ量化模型使用库
 autoawq==0.2.6
-# 多卡自动加速推理库
-accelerate

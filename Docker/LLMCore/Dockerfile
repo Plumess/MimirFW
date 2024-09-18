@@ -25,23 +25,47 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY LLMCore /app/LLMCore
 COPY config /app/config
 
-# ==============================
-# 开发/测试阶段: 包含开发工具和依赖
-# ==============================
-FROM base AS development
+# 示意暴露服务端口（并未实际映射）
+EXPOSE 24910
 
-# 复制 dev-requirements.txt
-COPY Docker/LLMCore/dev-requirements.txt .
+
+# ==============================
+# 生产阶段: NVIDIA
+# ==============================
+FROM base AS nvidia
+
+# 复制 requirements-cuda.txt
+COPY Docker/LLMCore/requirements-nvidia.txt .
 
 # 安装开发环境的依赖
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/torch \
-    pip install -r dev-requirements.txt
+    pip install -r requirements-nvidia.txt
+
 
 # ==============================
-# 生产阶段: 最终的轻量化运行环境
+# 生产阶段: CPU
 # ==============================
-FROM base AS production
+FROM base AS cpu
 
-# 示意暴露服务端口（并未实际映射）
-EXPOSE 24910
+# 复制 requirements-cpu.txt
+COPY Docker/LLMCore/requirements-cpu.txt .
+
+# 安装开发环境的依赖
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/torch \
+    pip install -r requirements-cpu.txt
+
+
+# ==============================
+# 生产阶段: MAC
+# ==============================
+FROM base AS mac
+
+# 复制 requirements-mac.txt
+COPY Docker/LLMCore/requirements-mac.txt .
+
+# 安装开发环境的依赖
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/torch \
+    pip install -r requirements-mac.txt

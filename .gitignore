@@ -9,6 +9,7 @@ LLMCore/logs/*
 Docker/Weaviate/data/*
 .cache
 __pycache__
+device.env
 
 # Plume ------------------
 assets/plume/*

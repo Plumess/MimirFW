@@ -1,13 +1,15 @@
 services:
+# ==============================
+# LLMCore 模块搭建
+# ==============================
   llmcore:
     build:
       context: ../
       dockerfile: Docker/LLMCore/Dockerfile
-      target: development  # 指定构建到 development 阶段
+      target: ${BUILD_STAGE}  # 指定构建到 device.env 所检测的环境
       args:
-        # Enable BuildKit inline cache
         BUILDKIT_INLINE_CACHE: '1'
-    image: llmcore:latest
+    image: llmcore:${BUILD_STAGE}-${VERSION}
     container_name: llmcore
     volumes:
       - ${LLMCORE_VOLUME:-../LLMCore}:/app/LLMCore  # 动态挂载 LLMCore
@@ -16,24 +18,30 @@ services:
       - mimirnet  # 统一使用自建的 MimirNet 网络通信
     ports:
       - 24910:24910
-    # 指定使用 NVIDIA Container Toolkit
-    deploy:
+    shm_size: '16gb'
+    env_file:
+      - ./LLMCore/llmcore.env
+      - ./device.env
+    restart: unless-stopped
+    command: sleep infinity
+    environment:
+      - DEVICE=${DEVICE}
+      - CUDA_VISIBLE_DEVICES=${USE_CUDA:+${CUDA_DEVICES}}
+    deploy:  # Swarm/Kubernetes
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
-    # 增加共享内存大小
-    shm_size: '16gb'
-    env_file:
-      - ./LLMCore/llmcore.env
-    restart: unless-stopped
-    command: sleep infinity
+    runtime: ${USE_CUDA:+nvidia}  # 仅在 CUDA 可用时使用 NVIDIA Container Toolkit
 
+# ==============================
+# Weaviate 向量数据库 搭建
+# ==============================
   weaviate:
     build:
       context: ../
       dockerfile: Docker/Weaviate/Dockerfile
-    image: weaviate:latest
+    image: weaviate:${VERSION}
     container_name: weaviate
     volumes:
     - ${WEAVIATE_DATA_VOLUME:-./Weaviate/data}:/var/lib/weaviate
@@ -57,7 +65,4 @@ networks:
   mimirnet:
     driver: bridge
 
-# 如果没有大改，只是加了一些环境
-# docker-compose up -d
-# 如果大改结构或者处于开发阶段，最好重构一下
-# docker-compose up -d --build && docker image prune -f
+# build.sh
