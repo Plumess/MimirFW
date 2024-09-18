@@ -1,4 +1,4 @@
-from config import WEAVIATE_URL, WEAVIATE_PORT, PROJECT_ROOT, DEVICE_INFO 
+from config import WEAVIATE_URL, WEAVIATE_PORT, PROJECT_ROOT, DEVICE_INFO
 from LLMCore.managers.utils.model_selecter import get_all_models
 from LLMCore.managers.model_loader import load_model
 
@@ -13,7 +13,9 @@ from langchain_text_splitters import CharacterTextSplitter
 
 def main():
     # 使用封装好的 DEVICE_INFO
+    print("=" * 50)
     print(f"设备信息：{DEVICE_INFO}")
+    print("=" * 50)
 
     # 1. 获取所有可用的模型
     print("获取可用的大模型和 embedding 模型...")
@@ -26,29 +28,32 @@ def main():
 
     print(f"使用的大模型: {large_model_info['name']}")
     print(f"使用的 embedding 模型: {embedding_model_info['name']}")
+    print("=" * 50)
 
     # 初始化 weaviate_client 为 None
     weaviate_client = None
 
     try:
         # 2. 加载模型和 embeddings
-        print(f"加载模型和 embeddings...")
+        print(f"加载模型中...")
         model_loader = load_model(large_model_path, embedding_model_path, max_new_tokens=512)
         model_loader.load_llm()
         llm = model_loader.get_llm()
         model_loader.load_embeddings()
         embeddings = model_loader.get_embeddings()
-        print("模型和 embeddings 加载完毕。")
+        print("模型加载完毕。")
+        print("=" * 50)
 
         # 3. 连接 Weaviate 向量数据库
-        # # https://weaviate.io/developers/weaviate/connections
+        # https://weaviate.io/developers/weaviate/connections
         print(f"尝试连接 Weaviate 数据库，URL: http://{WEAVIATE_URL}:{WEAVIATE_PORT}...")
         weaviate_client = weaviate.connect_to_local(
-            host=WEAVIATE_URL,  # Use a string to specify the host
+            host=WEAVIATE_URL,
             port=WEAVIATE_PORT,
             grpc_port=50051,
         )
         print("成功连接到 Weaviate 数据库。")
+        print("=" * 50)
 
         # 4. 定义模板化输出
         print("定义模板化输出...")
@@ -59,6 +64,7 @@ def main():
         # 创建可运行的序列
         chain = prompt_template | llm
         print("模板化输出定义完毕。")
+        print("=" * 50)
 
         # 示例输入
         question = "请介绍一下LangChain的主要功能。"
@@ -119,7 +125,7 @@ def main():
             weaviate_client.close()
             print()
             print("Weaviate 客户端连接已关闭。")
-            print()
+            print("=" * 50)
             print()
 
 if __name__ == "__main__":
