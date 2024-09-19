@@ -65,6 +65,7 @@ class CUDAModelLoader(BaseModelLoader):
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_path,
+            torch_dtype="auto",
             device_map='auto',  # 自动将模型切分到多个 GPU 上
             low_cpu_mem_usage=True
         )
