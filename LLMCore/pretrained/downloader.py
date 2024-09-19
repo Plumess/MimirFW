@@ -55,14 +55,14 @@ class ModelDownloader:
 if __name__ == "__main__":
     # 模拟前端传入的预设字典
     model_dict = {
-        "Qwen2-1.5B-Instruct": "qwen/qwen2-1.5b-instruct",
-        "Qwen2-1.5B-Instruct-AWQ": "qwen/Qwen2-1.5B-Instruct-AWQ",
-        "Qwen2-7B-Instruct": "qwen/qwen2-7b-instruct",
-        "Qwen2-7B-Instruct-AWQ": "qwen/Qwen2-7B-Instruct-AWQ",
-        "Qwen2-72B-Instruct": "qwen/qwen2-72b-instruct",
-        "Qwen2-72B-Instruct-AWQ": "qwen/Qwen2-72B-Instruct-AWQ",
+        "Qwen2.5-3B-Instruct": "qwen/Qwen2.5-3B-Instruct",
+        "Qwen2.5-3B-Instruct-AWQ": "qwen/Qwen2.5-3B-Instruct-AWQ",
+        "Qwen2.5-7B-Instruct": "qwen/Qwen2.5-7B-Instruct",
+        "Qwen2.5-7B-Instruct-AWQ": "qwen/Qwen2.5-7B-Instruct-AWQ",
+        "Qwen2.5-14B-Instruct": "qwen/Qwen2.5-14B-Instruct",
+        "Qwen2.5-14B-Instruct-AWQ": "qwen/Qwen2.5-14B-Instruct-AWQ",
+        
         "Llama3.1-8B-Instruct": "LLM-Research/Meta-Llama-3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct": "LLM-Research/Meta-Llama-3.1-70B-Instruct"
     }
 
     embedding_dict = {
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     }
 
     # 假设前端传入了模型和 embedding 的 key
-    model_key = "Qwen2-1.5B-Instruct-AWQ"
+    model_key = "Qwen2.5-7B-Instruct"
     embedding_key = "xiaobu-embedding-v2"
 
     # 获取对应的 ModelScope ID
