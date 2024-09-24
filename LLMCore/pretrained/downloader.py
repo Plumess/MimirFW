@@ -1,5 +1,6 @@
 import os
 from modelscope import snapshot_download
+from config import PROJECT_ROOT
 
 class ModelDownloader:
     def check_exists(self, model_path):
@@ -26,8 +27,8 @@ class ModelDownloader:
         """根据传递的 model_id 和 embedding_id 下载模型和 embedding"""
         
         # 自定义模型和 embedding
-        model_folder = os.path.join("./models", self.get_model_folder(model_id))
-        embedding_folder = os.path.join("./embedding", self.get_model_folder(embedding_id))
+        model_folder = os.path.join(PROJECT_ROOT, "LLMCore/pretrained/models", self.get_model_folder(model_id))
+        embedding_folder = os.path.join(PROJECT_ROOT, "LLMCore/pretrained/embedding", self.get_model_folder(embedding_id))
 
         # 检查主模型是否存在
         model_exists = self.check_exists(model_folder)
@@ -61,6 +62,8 @@ if __name__ == "__main__":
         "Qwen2.5-7B-Instruct-AWQ": "qwen/Qwen2.5-7B-Instruct-AWQ",
         "Qwen2.5-14B-Instruct": "qwen/Qwen2.5-14B-Instruct",
         "Qwen2.5-14B-Instruct-AWQ": "qwen/Qwen2.5-14B-Instruct-AWQ",
+        "Qwen2.5-32B-Instruct": "qwen/Qwen2.5-32B-Instruct",
+        "Qwen2.5-32B-Instruct-AWQ": "qwen/Qwen2.5-32B-Instruct-AWQ",
         
         "Llama3.1-8B-Instruct": "LLM-Research/Meta-Llama-3.1-8B-Instruct",
     }
@@ -73,7 +76,7 @@ if __name__ == "__main__":
     }
 
     # 假设前端传入了模型和 embedding 的 key
-    model_key = "Qwen2.5-7B-Instruct"
+    model_key = "Qwen2.5-7B-Instruct-AWQ"
     embedding_key = "xiaobu-embedding-v2"
 
     # 获取对应的 ModelScope ID
