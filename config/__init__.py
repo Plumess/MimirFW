@@ -10,3 +10,6 @@ WEAVIATE_PORT = '8080'
 # 设置设备环境变量
 from LLMCore.utils.device_checker import check_device
 DEVICE_INFO = check_device()
+
+# 设置 QWEN API 调用时的 BASE_URL
+QWEN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
