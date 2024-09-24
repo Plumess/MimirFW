@@ -18,3 +18,8 @@ sentence-transformers
 weaviate-client==4.8.1
 # AWQ量化模型使用库
 autoawq==0.2.6
+
+# 推理库
+vllm==0.6.1
+# 分布式计算框架（集群方案）
+# ray==2.36.0
