@@ -13,3 +13,8 @@ DEVICE_INFO = check_device()
 
 # 设置 QWEN API 调用时的 BASE_URL
 QWEN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
+
+# VLLM 服务的 LLM 模型 API 地址
+VLLM_LLM_SERVER_BASE_URL = 'http://vllm:8000/v1'
+# VLLM 服务的 Embedding 模型 API 地址
+VLLM_EMBEDDING_SERVER_BASE_URL = 'http://vllm:8000/v1/embeddings'

@@ -188,27 +188,29 @@ class APIModelLoader(ModelLoader):
 
 
 # ==============================
-# CUDA 模型加载器子类（未完成）
+# CUDA 模型加载器子类
 # ==============================
 class CUDAModelLoader(ModelLoader):
     def __init__(self, llm_model_source=None, embedding_model_source=None, inference_framework_type='vllm', device_info=None):
         super().__init__(llm_model_source, embedding_model_source, inference_framework_type, device_info)
 
-        if self.device_info is None:
-            from config import DEVICE_INFO
-            self.device_info = DEVICE_INFO
-
-        device_ids = [device['Device Index'] for device in self.device_info['GPU']['CUDA Devices']]
-        if not device_ids:
-            raise ValueError("没有可用的 CUDA 设备")
-
-        self.device_ids = device_ids
-        self.device = f'cuda:{device_ids[0]}'
-
-        # 根据推理框架初始化对应的推理引擎
         if self.inference_framework_type == 'vllm':
-            self.inference_framework = VLLMFramework(device_type='cuda', device_ids=device_ids)
+            # 初始化 VLLMFramework
+            self.inference_framework = VLLMFramework()
+
         elif self.inference_framework_type == 'transformers':
+            # 使用本地 Transformers 框架
+            if self.device_info is None:
+                from config import DEVICE_INFO
+                self.device_info = DEVICE_INFO
+
+            device_ids = [device['Device Index'] for device in self.device_info['GPU']['CUDA Devices']]
+            if not device_ids:
+                raise ValueError("没有可用的 CUDA 设备")
+
+            self.device_ids = device_ids
+            self.device = f'cuda:{device_ids[0]}'
+
             self.inference_framework = TransformersFramework(device=self.device)
         else:
             raise ValueError(f"不支持的推理框架：{self.inference_framework_type}")
@@ -216,47 +218,49 @@ class CUDAModelLoader(ModelLoader):
     def load_llm(self, **llm_kwargs):
         """加载 LLM 模型，kwargs 包含模型加载特有的参数。"""
         if not self.llm_model_source:
-            raise ValueError("LLM 模型路径未设置")
+            raise ValueError("LLM 模型标识符未设置")
         self.inference_framework.load_llm(self.llm_model_source, **llm_kwargs)
         self.llm = self.inference_framework.get_llm()
 
     def load_embeddings(self, **embeddings_kwargs):
         """加载 Embedding 模型，kwargs 包含模型加载特有的参数。"""
         if not self.embedding_model_source:
-            raise ValueError("Embedding 模型路径未设置")
+            raise ValueError("Embedding 模型标识符未设置")
         self.inference_framework.load_embeddings(self.embedding_model_source, **embeddings_kwargs)
         self.embeddings = self.inference_framework.get_embeddings()
 
 
 # ==============================
-# CPU 模型加载器子类（未完成）
+# CPU 模型加载器子类（未测试）
 # ==============================
 class CPUModelLoader(ModelLoader):
-    def __init__(self, llm_model_source=None, embedding_model_source=None, inference_framework_type='transformers', device_info=None):
+    def __init__(self, llm_model_source=None, embedding_model_source=None, inference_framework_type='vllm', device_info=None):
         super().__init__(llm_model_source, embedding_model_source, inference_framework_type, device_info)
 
-        self.device = 'cpu'
-
-        # 根据推理框架初始化对应的推理引擎
         if self.inference_framework_type == 'vllm':
-            self.inference_framework = VLLMFramework(device_type='cpu')
+            # 初始化 VLLMFramework，不需要传递 base_url
+            self.inference_framework = VLLMFramework()
+
         elif self.inference_framework_type == 'transformers':
+            # 使用本地 Transformers 框架
+            self.device = 'cpu'
             self.inference_framework = TransformersFramework(device=self.device)
         else:
             raise ValueError(f"不支持的推理框架：{self.inference_framework_type}")
 
     def load_llm(self, **llm_kwargs):
+        """加载 LLM 模型，kwargs 包含模型加载特有的参数。"""
         if not self.llm_model_source:
-            raise ValueError("LLM 模型路径未设置")
+            raise ValueError("LLM 模型标识符未设置")
         self.inference_framework.load_llm(self.llm_model_source, **llm_kwargs)
         self.llm = self.inference_framework.get_llm()
 
     def load_embeddings(self, **embeddings_kwargs):
+        """加载 Embedding 模型，kwargs 包含模型加载特有的参数。"""
         if not self.embedding_model_source:
-            raise ValueError("Embedding 模型路径未设置")
+            raise ValueError("Embedding 模型标识符未设置")
         self.inference_framework.load_embeddings(self.embedding_model_source, **embeddings_kwargs)
         self.embeddings = self.inference_framework.get_embeddings()
-
 
 # ==============================
 # Mac 模型加载器子类（未完成）
@@ -270,6 +274,7 @@ class MacModelLoader(ModelLoader):
         # 根据推理框架初始化对应的推理引擎
         if self.inference_framework_type == 'transformers':
             self.inference_framework = TransformersFramework(device=self.device)
+            
         elif self.inference_framework_type == 'mlx':
             raise NotImplementedError("MLX 推理引擎未实现")
         else:

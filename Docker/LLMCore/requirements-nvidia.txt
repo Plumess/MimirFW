@@ -8,6 +8,8 @@ torchaudio==2.3.1
 langchain-huggingface>=0.1,<0.2
 langchain-weaviate==0.1.0.dev1
 langchain-openai>=0.2,<0.3
+# 阿里云模型服务灵积
+dashscope
 
 # 境内在线模型下载
 modelscope
@@ -18,8 +20,3 @@ sentence-transformers
 weaviate-client==4.8.1
 # AWQ量化模型使用库
 autoawq==0.2.6
-
-# 推理库
-vllm==0.6.1
-# 分布式计算框架（集群方案）
-# ray==2.36.0

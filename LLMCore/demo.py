@@ -66,15 +66,27 @@ def demo(model_type, inference_framework_type, llm_source, embedding_source):
                 inference_framework_type=inference_framework_type,  # 'vllm', 'transformers'
             )
             # 设置 LLM 和 Embedding 模型路径
-            model_loader_interface.set_llm_model_source(os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/models/{llm_source}'))
-            model_loader_interface.set_embedding_model_source(os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/embedding/{embedding_source}'))
+            model_loader_interface.set_llm_model_source(os.path.join(PROJECT_ROOT, f'LLMCore/pretrained/models/{llm_source}'))
+            model_loader_interface.set_embedding_model_source(os.path.join(PROJECT_ROOT, f'LLMCore/pretrained/embedding/{embedding_source}'))
 
             # 加载模型和 embeddings
             # 对于本地版本，直接加载模型
-            model_loader_interface.load_llm()
-            llm = model_loader_interface.get_llm()
-            model_loader_interface.load_embeddings()
-            embeddings = model_loader_interface.get_embeddings()
+            if inference_framework_type == 'transformers':
+                # 此处应参考 LLMCore.managers.inference_framework.TransformersFramework.load_llm()方法的注释调用
+                model_loader_interface.load_llm(
+                    tokenizer_kwargs={},
+                    model_kwargs={"torch_dtype": "auto", "device_map": "auto", "low_cpu_mem_usage": True},  # 推荐模型加载参数
+                    pipeline_kwargs={"max_new_tokens": 512, "truncation": True}  # 推荐 pipeline 参数
+                )
+                llm = model_loader_interface.get_llm()
+                model_loader_interface.load_embeddings()
+                embeddings = model_loader_interface.get_embeddings()
+
+            elif inference_framework_type == 'vllm':
+                model_loader_interface.load_llm()
+                llm = model_loader_interface.get_llm()
+                model_loader_interface.load_embeddings()
+                embeddings = model_loader_interface.get_embeddings()
 
         print("模型加载完毕。")
         print("=" * 50)
@@ -188,20 +200,20 @@ def main():
         },
         'test3': {
             'model_type': 'local',
-            'inference_framework_type': 'vllm',
+            'inference_framework_type': 'transformers',
             'llm_source': 'Qwen2.5-7B-Instruct-AWQ',
             'embedding_source': 'xiaobu-embedding-v2'
         },
         'test4': {
             'model_type': 'local',
-            'inference_framework_type': 'transformers',
+            'inference_framework_type': 'vllm',
             'llm_source': 'Qwen2.5-7B-Instruct-AWQ',
             'embedding_source': 'xiaobu-embedding-v2'
         },
     }
 
     # 选择要执行的test
-    selected_test = 'test2'  # 修改这里可以选择不同的test
+    selected_test = 'test3'  # 修改这里可以选择不同的test
 
     # 获取选定的test的参数并调用demo函数
     test_params = test_cases[selected_test]
