@@ -13,59 +13,76 @@ from config import WEAVIATE_URL, WEAVIATE_PORT, PROJECT_ROOT, DEVICE_INFO
 
 # 如果您使用的是 API，需要设置 API 密钥
 # export API_KEY='***'
-API_KEY = os.getenv('API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY')
 
-def main():
+def demo(model_type, inference_framework_type, llm_source, embedding_source):
+    # 1.基本测试信息输出
+    print("=" * 50)
+    print(f"Running demo with:")
+    print(f"  Model Type: {model_type}")
+    print(f"  Inference Framework: {inference_framework_type}")
+    print(f"  LLM Source: {llm_source}")
+    print(f"  Embedding Source: {embedding_source}")
+    print("=" * 50)
+    print()
+
     # 使用封装好的 DEVICE_INFO
     print("=" * 50)
     print(f"设备信息：{DEVICE_INFO}")
     print("=" * 50)
-
-    # 1.选择版本：'api' 或 'local'
-    version = 'api'
-
-    if version == 'api':
-        # 创建模型加载器接口实例 API Version
-        model_loader_interface = ModelLoaderInterface(
-            model_type='api',                  # 'local' or 'api'
-            inference_framework_type='openai'  # 'openai', 'qwen'
-        )
-        # 设置 LLM 和 Embedding 模型标识符
-        model_loader_interface.set_llm_model_source('gpt-4o')
-        model_loader_interface.set_embedding_model_source('text-embedding-ada-002')
-
-    elif version == 'local':
-        # 创建模型加载器接口实例 Local Version
-        model_loader_interface = ModelLoaderInterface(
-            model_type='local',                       # 'local' or 'api'
-            inference_framework_type='transformers',  # 'vllm', 'transformers'
-        )
-        # 设置 LLM 和 Embedding 模型路径
-        model_loader_interface.set_llm_model_source(os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/models/Qwen2.5-7B-Instruct-AWQ'))
-        model_loader_interface.set_embedding_model_source(os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/embedding/xiaobu-embedding-v2'))
-
-    # 初始化 weaviate_client 为 None
-    weaviate_client = None
+    print()
 
     try:
-        # 2.加载模型和 embeddings
+        # 2.根据参数创建模型加载实例
         print(f"加载模型中...")
-        if version == 'api':
+        if model_type == 'api':
+            if inference_framework_type == 'openai':
+                API_KEY = OPENAI_API_KEY
+            elif inference_framework_type == 'qwen':
+                API_KEY = DASHSCOPE_API_KEY
+
+            # 创建模型加载器接口实例 API Version
+            model_loader_interface = ModelLoaderInterface(
+                model_type=model_type,                             # 'local' or 'api'
+                inference_framework_type=inference_framework_type  # 'openai', 'qwen'
+            )
+            # 设置 LLM 和 Embedding 模型标识符
+            model_loader_interface.set_llm_model_source(llm_source)
+            model_loader_interface.set_embedding_model_source(embedding_source)
+
+            # 加载模型和 embeddings
             # 对于 API 版本，在加载模型时传递 api_key
             model_loader_interface.load_llm(api_key=API_KEY)
             llm = model_loader_interface.get_llm()
             model_loader_interface.load_embeddings(api_key=API_KEY)
             embeddings = model_loader_interface.get_embeddings()
-        else:
+
+
+        elif model_type == 'local':
+            # 创建模型加载器接口实例 Local Version
+            model_loader_interface = ModelLoaderInterface(
+                model_type=model_type,                              # 'local' or 'api'
+                inference_framework_type=inference_framework_type,  # 'vllm', 'transformers'
+            )
+            # 设置 LLM 和 Embedding 模型路径
+            model_loader_interface.set_llm_model_source(os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/models/{llm_source}'))
+            model_loader_interface.set_embedding_model_source(os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/embedding/{embedding_source}'))
+
+            # 加载模型和 embeddings
             # 对于本地版本，直接加载模型
             model_loader_interface.load_llm()
             llm = model_loader_interface.get_llm()
             model_loader_interface.load_embeddings()
             embeddings = model_loader_interface.get_embeddings()
+
         print("模型加载完毕。")
         print("=" * 50)
+        print()
 
         # 3. 连接 Weaviate 向量数据库
+        # 初始化 weaviate_client 为 None
+        weaviate_client = None
         # https://weaviate.io/developers/weaviate/connections
         print(f"尝试连接 Weaviate 数据库，URL: http://{WEAVIATE_URL}:{WEAVIATE_PORT}...")
         weaviate_client = weaviate.connect_to_local(
@@ -75,6 +92,7 @@ def main():
         )
         print("成功连接到 Weaviate 数据库。")
         print("=" * 50)
+        print()
 
         # 4. 定义模板化输出和输出解析器
         print("定义模板化输出和输出解析器...")
@@ -86,6 +104,7 @@ def main():
         parser = StrOutputParser()
         print("模板化输出和输出解析器定义完毕。")
         print("=" * 50)
+        print()
 
         # 示例输入
         question = "请介绍一下LangChain的主要功能。"
@@ -150,8 +169,46 @@ def main():
             print("=" * 50)
             print()
 
+
+# main 函数
+def main():
+    # 定义多种test测试例子，使用字典存储
+    test_cases = {
+        'test1': {
+            'model_type': 'api',
+            'inference_framework_type': 'openai',
+            'llm_source': 'gpt-4o',
+            'embedding_source': 'text-embedding-ada-002'
+        },
+        'test2': {
+            'model_type': 'api',
+            'inference_framework_type': 'qwen',
+            'llm_source': 'qwen-plus',
+            'embedding_source': 'text-embedding-v3'
+        },
+        'test3': {
+            'model_type': 'local',
+            'inference_framework_type': 'vllm',
+            'llm_source': 'Qwen2.5-7B-Instruct-AWQ',
+            'embedding_source': 'xiaobu-embedding-v2'
+        },
+        'test4': {
+            'model_type': 'local',
+            'inference_framework_type': 'transformers',
+            'llm_source': 'Qwen2.5-7B-Instruct-AWQ',
+            'embedding_source': 'xiaobu-embedding-v2'
+        },
+    }
+
+    # 选择要执行的test
+    selected_test = 'test2'  # 修改这里可以选择不同的test
+
+    # 获取选定的test的参数并调用demo函数
+    test_params = test_cases[selected_test]
+    demo(**test_params)
+
+# 运行main函数
 if __name__ == "__main__":
     main()
-
 
 # python LLMCore/demo.py > ./LLMCore/logs/demo0914.log
