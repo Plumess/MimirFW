@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from config import QWEN_BASE_URL
 import os
 
+# ==============================
+# 通用 API 推理引擎基类
+# ==============================
 class InferenceFramework(ABC):
     @abstractmethod
     def load_llm(self, llm_model_source, **kwargs):
@@ -25,27 +28,27 @@ class InferenceFramework(ABC):
 
 
 # ==============================
-# 通用 API 推理引擎基类
+# OpenAI API 推理引擎
 # ==============================
-class BaseAPIFramework(InferenceFramework):
+class OpenAIAPIFramework(InferenceFramework):
     def __init__(self):
         """
-        初始化 API 推理引擎基类。
+        初始化 API 推理引擎。
         """
         self.llm_model = None
         self.embedding_model = None
 
     def load_llm(self, llm_model_source, **llm_kwargs):
         """
-        加载通用 LLM 模型，子类可根据需要覆盖 base_url 或其他参数。
+        加载 LLM 模型，可根据需要覆盖 base_url 或其他参数。
         """
         from langchain_openai import ChatOpenAI
 
-        self.llm_api_key = llm_kwargs.pop('api_key', os.getenv('API_KEY'))
+        self.llm_api_key = llm_kwargs.pop('api_key', os.getenv('OPENAI_API_KEY'))
         if not self.llm_api_key:
             raise ValueError("LLM API 密钥未设置")
 
-        # 如果子类需要，可以覆盖 base_url
+        # 如果需要，可以覆盖 base_url
         self.llm_base_url = llm_kwargs.pop('base_url', None)
 
         self.llm_model = ChatOpenAI(
@@ -57,15 +60,15 @@ class BaseAPIFramework(InferenceFramework):
 
     def load_embeddings(self, embeddings_model_source, **embeddings_kwargs):
         """
-        加载通用 Embeddings 模型，子类可根据需要覆盖 base_url 或其他参数。
+        加载 Embeddings 模型，可根据需要覆盖 base_url 或其他参数。
         """
         from langchain_openai import OpenAIEmbeddings
 
-        self.embeddings_api_key = embeddings_kwargs.pop('api_key', os.getenv('API_KEY'))
+        self.embeddings_api_key = embeddings_kwargs.pop('api_key', os.getenv('OPENAI_API_KEY'))
         if not self.embeddings_api_key:
             raise ValueError("Embeddings API 密钥未设置")
 
-        # 如果子类需要，可以覆盖 base_url
+        # 如果需要，可以覆盖 base_url
         self.embedding_base_url = embeddings_kwargs.pop('base_url', None)
 
         self.embedding_model = OpenAIEmbeddings(
@@ -81,42 +84,54 @@ class BaseAPIFramework(InferenceFramework):
     def get_embeddings(self):
         return self.embedding_model
 
-# ==============================
-# OpenAI API 推理引擎
-# ==============================
-class OpenAIAPIFramework(BaseAPIFramework):
-    def __init__(self):
-        """
-        初始化 OpenAI API 推理引擎。
-        """
-        super().__init__()
-
 
 # ==============================
 # 阿里云 Qwen2 API 推理引擎
 # ==============================
-class QwenAPIFramework(BaseAPIFramework):
+class QwenAPIFramework(InferenceFramework):
     def __init__(self):
         """
-        初始化 Qwen API 推理引擎。
+        初始化 API 推理引擎。
         """
-        super().__init__()
+        self.llm_model = None
+        self.embedding_model = None
 
     def load_llm(self, llm_model_source, **llm_kwargs):
-        # 若用户未设置 base_url，则使用 Qwen 官方默认的 base_url
-        if 'base_url' not in llm_kwargs:
-            llm_kwargs['base_url'] = QWEN_BASE_URL
+        """
+        加载 LLM 模型，可根据需要覆盖 base_url 或其他参数。
+        """
+        from langchain_community.chat_models.tongyi import ChatTongyi
 
-        # 调用基类的方法进行加载
-        super().load_llm(llm_model_source, **llm_kwargs)
+        self.llm_api_key = llm_kwargs.pop('api_key', os.getenv('DASHSCOPE_API_KEY'))
+        if not self.llm_api_key:
+            raise ValueError("LLM API 密钥未设置")
+
+        self.llm_model = ChatTongyi(
+            model=llm_model_source,
+            api_key=self.llm_api_key,
+            **llm_kwargs
+        )
 
     def load_embeddings(self, embeddings_model_source, **embeddings_kwargs):
-        # 若用户未设置 base_url，则使用 Qwen 官方默认的 base_url
-        if 'base_url' not in embeddings_kwargs:
-            embeddings_kwargs['base_url'] = QWEN_BASE_URL
+        """
+        加载 Embeddings 模型，可根据需要覆盖 base_url 或其他参数。
+        """
+        from langchain_community.embeddings.dashscope import DashScopeEmbeddings
 
-        # 调用基类的方法进行加载
-        super().load_embeddings(embeddings_model_source, **embeddings_kwargs)
+        self.embeddings_api_key = embeddings_kwargs.pop('api_key', os.getenv('DASHSCOPE_API_KEY'))
+        if not self.embeddings_api_key:
+            raise ValueError("Embeddings API 密钥未设置")
+            
+        self.embedding_model = DashScopeEmbeddings(
+            model=embeddings_model_source,
+            **embeddings_kwargs
+        )
+
+    def get_llm(self):
+        return self.llm_model
+
+    def get_embeddings(self):
+        return self.embedding_model
 
 
 # ==============================
