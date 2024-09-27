@@ -5,11 +5,11 @@ services:
   llmcore:
     build:
       context: ../
-      dockerfile: Docker/LLMCore/Dockerfile
-      target: ${BUILD_STAGE}  # 指定构建到 device.env 所检测的环境
+      dockerfile: Docker/LLMCore/${DOCKERFILE_DEVICE}
+      target: product
       args:
         BUILDKIT_INLINE_CACHE: '1'
-    image: llmcore:${BUILD_STAGE}-${VERSION}
+    image: llmcore:${DEVICE}-${LLMCORE_VERSION}
     container_name: llmcore
     volumes:
       - ${LLMCORE_VOLUME:-../LLMCore}:/app/LLMCore  # 动态挂载 LLMCore
@@ -25,13 +25,6 @@ services:
     command: sleep infinity
     environment:
       - DEVICE=${DEVICE}
-      - CUDA_VISIBLE_DEVICES=${USE_CUDA:+${CUDA_DEVICES}}
-    deploy:  # Swarm/Kubernetes
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
-    runtime: ${USE_CUDA:+nvidia}  # 仅在 CUDA 可用时使用 NVIDIA Container Toolkit
 
 # ==============================
 # Weaviate 向量数据库 搭建
@@ -40,15 +33,17 @@ services:
     build:
       context: ../
       dockerfile: Docker/Weaviate/Dockerfile
-    image: weaviate:${VERSION}
+      args:
+        WEAVIATE_VERSION: ${WEAVIATE_VERSION}
+    image: weaviate:${WEAVIATE_VERSION}
     container_name: weaviate
     volumes:
-    - ${WEAVIATE_DATA_VOLUME:-./Weaviate/data}:/var/lib/weaviate
+      - ${WEAVIATE_DATA_VOLUME:-./Weaviate/data}:/var/lib/weaviate
     networks:
       - mimirnet
     ports:
-    - 24980:8080
-    - 50052:50051
+      - 24980:8080
+      - 50052:50051
     restart: unless-stopped
     env_file:
       - ./Weaviate/weaviate.env
@@ -64,4 +59,4 @@ networks:
   mimirnet:
     driver: bridge
 
-# build.sh
+# ./build.sh

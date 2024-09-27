@@ -1,22 +1,18 @@
 #!/bin/bash
 
-# 定义路径
-SCRIPT_DIR="./scripts"
-ROOT_DIR="./"
-LLMCORE_DIR="./LLMCore"
+# 原始工作路径
+ORIGINAL_DIR=$(pwd)
 
 # 检测设备以区分构建
 export DEVICE="cpu"
 export USE_CUDA="false"
 export CUDA_DEVICES=""
-export BUILD_STAGE="cpu"
 
 # 检查是否有 NVIDIA GPU
 if command -v nvidia-smi &> /dev/null
 then
     export DEVICE="cuda"
     export USE_CUDA="true"
-    export BUILD_STAGE="nvidia"
     # 获取所有可用的 GPU ID
     export CUDA_DEVICES=$(nvidia-smi --query-gpu=index --format=csv,noheader | tr '\n' ',')
     # 移除最后一个逗号
@@ -26,22 +22,49 @@ else
     if [[ "$(uname -s)" == "Darwin" ]] && [[ "$(sysctl -n machdep.cpu.brand_string)" == *"Apple"* ]]
     then
         export DEVICE="mps"
-        export BUILD_STAGE="mac"
     fi
 fi
 
-# 动态设置镜像标签
-export IMAGE_TAG="llmcore:${BUILD_STAGE,,}"  # 使用 BUILD_STAGE 并转换为小写
+# 如果没有vLLM项目，git clone 一份，由.env 控制的版本号
+TARGET_DIR="./vLLM"
+export $(grep -v '^#' .env | xargs)
+# 检查目标目录下是否有 .git 文件夹
+if [ -d "$TARGET_DIR/.git" ]; then
+    echo "Git repository already exists in $TARGET_DIR."
+    # 检查是否是完整克隆且没有损坏
+    cd $TARGET_DIR
+    git fetch --dry-run > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "Repository in $TARGET_DIR is fully cloned and healthy."
+    else
+        echo "Repository exists but might be corrupted or incomplete. Re-cloning..."
+        cd ..
+        rm -rf $TARGET_DIR
+        git clone -b $VLLM_VERSION https://github.com/vllm-project/vllm.git $TARGET_DIR
+    fi
+else
+    echo "Cloning the repository..."
+    git clone -b $VLLM_VERSION https://github.com/vllm-project/vllm.git $TARGET_DIR
+fi
 
-# # 生成 device.env 文件
-# echo "DEVICE=$DEVICE" >> device.env
-# echo "USE_CUDA=$USE_CUDA" >> device.env
-# echo "BUILD_STAGE=$BUILD_STAGE" >> device.env
+# 恢复到原始工作目录
+cd $ORIGINAL_DIR
 
-# # 仅当 CUDA 可用时才写入 CUDA_DEVICES
-# if [ "$USE_CUDA" = "true" ]; then
-#     echo "CUDA_DEVICES=$CUDA_DEVICES" >> device.env
-# fi
+# 根据设备类型确定使用的 Dockerfile
+if [[ "$DEVICE" == "cuda" ]]; then
+    export DOCKERFILE_DEVICE="Dockerfile"
+else
+    export DOCKERFILE_DEVICE="Dockerfile.$DEVICE"
+fi
 
-# 使用 docker-compose 构建和启动服务
-docker-compose up -d --build && docker image prune -f
+# 根据设备类型构建和启动服务
+if [[ "$DEVICE" == "cuda" ]]; then
+    docker-compose -f docker-compose.yml -f docker-compose.override.cuda.yml up -d --build && docker image prune -f
+elif [[ "$DEVICE" == "cpu" ]]; then
+    docker-compose -f docker-compose.yml -f docker-compose.override.cpu.yml up -d --build && docker image prune -f
+elif [[ "$DEVICE" == "mps" ]]; then
+    docker-compose -f docker-compose.yml -f docker-compose.override.mps.yml up -d --build && docker image prune -f
+else
+    docker-compose up -d --build && docker image prune -f
+fi
+

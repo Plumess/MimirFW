@@ -1,0 +1,33 @@
+services:
+# ==============================
+# LLMCore 模块搭建
+# ==============================
+  llmcore:
+    environment:
+      - CUDA_VISIBLE_DEVICES=${USE_CUDA:+${CUDA_DEVICES}}
+    deploy:  # Swarm/Kubernetes
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: ${USE_CUDA:+nvidia}  # 仅在 CUDA 可用时使用 NVIDIA Container Toolkit
+
+# ==============================
+# vLLM 推理后端 搭建
+# ==============================
+  vllm:
+    build:
+      context: vLLM/
+      dockerfile: ${DOCKERFILE_DEVICE}
+    image: vllm:${DEVICE}-${VLLM_VERSION}
+    container_name: vllm
+    volumes:
+      # 动态挂载本地的模型目录到容器内部
+      - ${LLM_MODEL_VOLUME:-../LLMCore/pretrained/models}:/download/models
+      - ${EMBEDDING_MODEL_VOLUME:-../LLMCore/pretrained/embedding}:/download/embedding
+    networks:
+      - mimirnet
+    ports:
+      - 24900:8000
+    restart: unless-stopped
+    command: ["python3", "-m", "vllm.entrypoints.openai.api_server", "--download-dir", "/download"]  # 指定模型下载/存放路径
