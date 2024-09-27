@@ -116,7 +116,7 @@ MimirFW/
 │   │   ├── model_selector.py               # 供前端接口使用，枚举可使用模型
 │   │
 │   ├── pretrained/
-│   │   ├── embedding                       # 向量化用的嵌入模型存放位置
+│   │   ├── embedding                       # 嵌入模型存放位置
 │   │   ├── models                          # 对话大模型存放位置
 │   │   └── downloader.py                   # 自实现的模型下载器，使用 ModelScope 源
 │   │
