@@ -20,9 +20,12 @@ services:
       context: vLLM/
       dockerfile: ${DOCKERFILE_DEVICE}
       args:
-        max_jobs: 16  # 设置并行编译的最大线程数
-        nvcc_threads: 8  # NVCC 编译时的并行线程数
+        max_jobs: 24  # 设置并行编译的最大线程数
+        nvcc_threads: 12  # NVCC 编译时的并行线程数
         torch_cuda_arch_list: ""  # 构建时让 vLLM 自动检测 GPU 类型
+        RUN_WHEEL_CHECK: "false"  # 关掉！关掉！不然会浪费你人生中的几千秒
+      cache_from:
+        - vllm:${DEVICE}-${VLLM_VERSION}
     image: vllm:${DEVICE}-${VLLM_VERSION}
     container_name: vllm
     volumes:
@@ -34,4 +37,4 @@ services:
     ports:
       - 24900:8000
     restart: unless-stopped
-    command: ["python3", "-m", "vllm.entrypoints.openai.api_server", "--download-dir", "/download"]  # 指定模型下载/存放路径
+    command: sleep infinity

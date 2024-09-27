@@ -7,6 +7,7 @@
       dockerfile: ${DOCKERFILE_DEVICE}
       args:
         max_jobs: 8  # 设置并行编译的最大线程数
+        RUN_WHEEL_CHECK: "false"  # 关掉！关掉！不然会浪费你人生中的几千秒
     image: vllm:${DEVICE}-${VLLM_VERSION}
     container_name: vllm
     volumes:
@@ -18,4 +19,4 @@
     ports:
       - 24900:8000
     restart: unless-stopped
-    command: ["python3", "-m", "vllm.entrypoints.openai.api_server", "--download-dir", "/download"]  # 指定模型下载/存放路径
+    command: sleep infinity

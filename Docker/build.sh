@@ -59,12 +59,12 @@ fi
 
 # 根据设备类型构建和启动服务
 if [[ "$DEVICE" == "cuda" ]]; then
-    docker-compose -f docker-compose.yml -f docker-compose.override.cuda.yml up -d --build && docker image prune -f
+    docker-compose -f docker-compose.yml -f docker-compose.override.cuda.yml up -d && docker image prune -f
 elif [[ "$DEVICE" == "cpu" ]]; then
-    docker-compose -f docker-compose.yml -f docker-compose.override.cpu.yml up -d --build && docker image prune -f
+    docker-compose -f docker-compose.yml -f docker-compose.override.cpu.yml up -d && docker image prune -f
 elif [[ "$DEVICE" == "mps" ]]; then
-    docker-compose -f docker-compose.yml -f docker-compose.override.mps.yml up -d --build && docker image prune -f
+    docker-compose -f docker-compose.yml -f docker-compose.override.mps.yml up -d && docker image prune -f
 else
-    docker-compose up -d --build && docker image prune -f
+    docker-compose up -d && docker image prune -f
 fi
 
