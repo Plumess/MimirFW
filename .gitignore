@@ -11,7 +11,7 @@ Docker/Weaviate/data/*
 .vscode
 __pycache__
 device.env
-Docker/vLLM/*
+Docker/vLLM
 !.gitkeep
 
 # Plume ------------------

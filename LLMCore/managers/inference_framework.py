@@ -107,7 +107,7 @@ class QwenAPIFramework(InferenceFramework):
 
         self.llm_model = ChatTongyi(
             model=llm_model_source,
-            api_key=self.llm_api_key,  # api_key 或 openai_api_base 都可，是 alisa
+            api_key=self.llm_api_key,
             **llm_kwargs
         )
 
@@ -134,17 +134,21 @@ class QwenAPIFramework(InferenceFramework):
 
 
 # ==============================
-# VLLM 推理接口 (未对接 vllm )
+# VLLM 推理兼容 OpenAI 调用接口 
 # ==============================
-class VLLMFramework(InferenceFramework):
+class VLLMOpenAIFramework(InferenceFramework):
     def __init__(self):
         """
         初始化 VLLM 推理接口。
+        只要 vllm 能提供 base_url 就可以使用
+        目前看官方 Dockerfile ，应该是 CPU 和 CUDA 都行
+
+        AMD ROCm 等 似乎没有启用 vllm.entrypoints.openai.api_server
+        若适配，可能需要根据 官方 API Client 指南 撰写额外的调用接口
         """
         # 从配置文件中导入 VLLM 服务的 API 地址
-        from config import VLLM_LLM_SERVER_BASE_URL, VLLM_EMBEDDING_SERVER_BASE_URL
-        self.llm_base_url = VLLM_LLM_SERVER_BASE_URL.rstrip('/') if VLLM_LLM_SERVER_BASE_URL else None
-        self.embedding_base_url = VLLM_EMBEDDING_SERVER_BASE_URL.rstrip('/') if VLLM_EMBEDDING_SERVER_BASE_URL else None
+        from config import VLLM_SERVER_BASE_URL
+        self.vllm_base_url = VLLM_SERVER_BASE_URL.rstrip('/') if VLLM_SERVER_BASE_URL else None
         self.llm_model = None
         self.embedding_model = None
 
@@ -154,12 +158,13 @@ class VLLMFramework(InferenceFramework):
         """
         from langchain_openai import ChatOpenAI
 
-        if not self.llm_base_url:
-            raise ValueError("VLLM 服务的 LLM base_url 未设置，请在config/__init__.py中添加 VLLM_EMBEDDING_SERVER_BASE_URL")
-
+        if not self.vllm_base_url:
+            raise ValueError("VLLM 服务的 base_url 未设置，请在config/__init__.py中添加 VLLM_EMBEDDING_SERVER_BASE_URL")
+        
+        llm_path = os.path.join(f'/download/models/{llm_model_source}')
         self.llm_model = ChatOpenAI(
-            model=llm_model_source,
-            openai_api_base=self.llm_base_url,
+            model=llm_path,
+            openai_api_base=self.vllm_base_url,    # base_url 或 openai_api_base 都可，是 alisa
             **llm_kwargs
         )
 
@@ -169,12 +174,13 @@ class VLLMFramework(InferenceFramework):
         """
         from langchain_openai import OpenAIEmbeddings
 
-        if not self.embedding_base_url:
-            raise ValueError("VLLM 服务的 Embedding base_url 未设置，请在config/__init__.py中添加 VLLM_EMBEDDING_SERVER_BASE_URL")
+        if not self.vllm_base_url:
+            raise ValueError("VLLM 服务的 base_url 未设置，请在config/__init__.py中添加 VLLM_EMBEDDING_SERVER_BASE_URL")
 
+        embeddings_path = os.path.join(f'/embedding/models/{embeddings_model_source}')
         self.embedding_model = OpenAIEmbeddings(
-            model=embeddings_model_source,
-            openai_api_base=self.embedding_base_url,
+            model=embeddings_path,
+            openai_api_base=self.vllm_base_url,
             **embeddings_kwargs
         )
 

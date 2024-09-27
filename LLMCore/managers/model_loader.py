@@ -195,8 +195,8 @@ class CUDAModelLoader(ModelLoader):
         super().__init__(llm_model_source, embedding_model_source, inference_framework_type, device_info)
 
         if self.inference_framework_type == 'vllm':
-            # 初始化 VLLMFramework
-            self.inference_framework = VLLMFramework()
+            # 初始化 VLLMOpenAIFramework
+            self.inference_framework = VLLMOpenAIFramework()
 
         elif self.inference_framework_type == 'transformers':
             # 使用本地 Transformers 框架
@@ -238,8 +238,8 @@ class CPUModelLoader(ModelLoader):
         super().__init__(llm_model_source, embedding_model_source, inference_framework_type, device_info)
 
         if self.inference_framework_type == 'vllm':
-            # 初始化 VLLMFramework，不需要传递 base_url
-            self.inference_framework = VLLMFramework()
+            # 使用本地 vllm 通信
+            self.inference_framework = VLLMOpenAIFramework()
 
         elif self.inference_framework_type == 'transformers':
             # 使用本地 Transformers 框架
@@ -274,7 +274,7 @@ class MacModelLoader(ModelLoader):
         # 根据推理框架初始化对应的推理引擎
         if self.inference_framework_type == 'transformers':
             self.inference_framework = TransformersFramework(device=self.device)
-            
+
         elif self.inference_framework_type == 'mlx':
             raise NotImplementedError("MLX 推理引擎未实现")
         else:

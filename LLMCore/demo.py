@@ -160,7 +160,7 @@ def demo(model_type, inference_framework_type, llm_source, embedding_source):
             # 使用管道操作符组合组件
             chain_with_context = prompt_with_context | llm | parser
             # 调用模型时，传递完整的 context
-            response = chain_with_context.invoke({"display_context": display_context, "question": question})
+            response = chain_with_context.invoke({"display_context": display_context, "question": question, "context": context})
         else:
             # 无上下文时直接生成响应
             chain = prompt_template | llm | parser
