@@ -30,14 +30,14 @@ EXPOSE 24910
 
 
 # ==============================
-# 生产阶段: NVIDIA
+# 生产阶段: MAC
 # ==============================
 FROM base AS product
 
-# 复制 requirements-cuda.txt
-COPY Docker/LLMCore/requirements-cuda.txt .
+# 复制 requirements-mps.txt
+COPY Docker/LLMCore/requirements-mps.txt .
 
 # 安装开发环境的依赖
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/torch \
-    pip install -r requirements-cuda.txt
+    pip install -r requirements-mps.txt

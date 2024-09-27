@@ -4,7 +4,7 @@ torch==2.3.1
 torchvision==0.18.1
 torchaudio==2.3.1
 
-# LangChain额外组件
+# LangChain 额外组件
 langchain-huggingface>=0.1,<0.2
 langchain-weaviate==0.1.0.dev1
 langchain-openai>=0.2,<0.3
@@ -16,7 +16,7 @@ modelscope
 # huggingface 模型使用框架
 transformers
 sentence-transformers
-# 向量数据库weaviate客户端
+# 向量数据库 weaviate 客户端
 weaviate-client==4.8.1
-# AWQ量化模型使用库
+# AWQ 量化模型使用库
 autoawq==0.2.6
