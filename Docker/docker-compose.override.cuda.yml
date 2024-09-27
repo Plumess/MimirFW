@@ -19,6 +19,10 @@ services:
     build:
       context: vLLM/
       dockerfile: ${DOCKERFILE_DEVICE}
+      args:
+        max_jobs: 16  # 设置并行编译的最大线程数
+        nvcc_threads: 8  # NVCC 编译时的并行线程数
+        torch_cuda_arch_list: ""  # 构建时让 vLLM 自动检测 GPU 类型
     image: vllm:${DEVICE}-${VLLM_VERSION}
     container_name: vllm
     volumes:

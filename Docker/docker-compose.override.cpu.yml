@@ -5,6 +5,8 @@
     build:
       context: vLLM/
       dockerfile: ${DOCKERFILE_DEVICE}
+      args:
+        max_jobs: 8  # 设置并行编译的最大线程数
     image: vllm:${DEVICE}-${VLLM_VERSION}
     container_name: vllm
     volumes:
