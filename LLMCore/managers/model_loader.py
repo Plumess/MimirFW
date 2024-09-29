@@ -194,24 +194,22 @@ class CUDAModelLoader(ModelLoader):
     def __init__(self, llm_model_source=None, embedding_model_source=None, inference_framework_type='vllm', device_info=None):
         super().__init__(llm_model_source, embedding_model_source, inference_framework_type, device_info)
 
+        if self.device_info is None:
+            from config import DEVICE_INFO
+            self.device_info = DEVICE_INFO
+
+        # 获取所有 CUDA 设备的标识符，例如 ['cuda:0', 'cuda:1']
+        self.devices = [f"cuda:{device['Device Index']}" for device in self.device_info.get('GPU', {}).get('CUDA Devices', [])]
+        if not self.devices:
+            raise ValueError("没有可用的 CUDA 设备")
+
         if self.inference_framework_type == 'vllm':
             # 初始化 VLLMOpenAIFramework
-            self.inference_framework = VLLMOpenAIFramework()
+            self.inference_framework = VLLMFramework(devices=self.devices)
 
         elif self.inference_framework_type == 'transformers':
-            # 使用本地 Transformers 框架
-            if self.device_info is None:
-                from config import DEVICE_INFO
-                self.device_info = DEVICE_INFO
-
-            device_ids = [device['Device Index'] for device in self.device_info['GPU']['CUDA Devices']]
-            if not device_ids:
-                raise ValueError("没有可用的 CUDA 设备")
-
-            self.device_ids = device_ids
-            self.device = f'cuda:{device_ids[0]}'
-
-            self.inference_framework = TransformersFramework(device=self.device)
+            # 初始化 Transformers 框架
+            self.inference_framework = TransformersFramework(devices=self.devices)
         else:
             raise ValueError(f"不支持的推理框架：{self.inference_framework_type}")
 

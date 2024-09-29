@@ -134,53 +134,59 @@ class QwenAPIFramework(InferenceFramework):
 
 
 # ==============================
-# VLLM 推理兼容 OpenAI 调用接口 
+# VLLM 推理接口 
 # ==============================
-class VLLMOpenAIFramework(InferenceFramework):
-    def __init__(self):
+class VLLMFramework(InferenceFramework):
+    def __init__(self, devices):
         """
         初始化 VLLM 推理接口。
-        只要 vllm 能提供 base_url 就可以使用
-        目前看官方 Dockerfile ，应该是 CPU 和 CUDA 都行
 
-        AMD ROCm 等 似乎没有启用 vllm.entrypoints.openai.api_server
-        若适配，可能需要根据 官方 API Client 指南 撰写额外的调用接口
+        devices: 设备列表，例如 ['cuda:0', 'cuda:1', ...]
         """
-        # 从配置文件中导入 VLLM 服务的 API 地址
-        from config import VLLM_SERVER_BASE_URL
-        self.vllm_base_url = VLLM_SERVER_BASE_URL.rstrip('/') if VLLM_SERVER_BASE_URL else None
+        self.devices = devices
         self.llm_model = None
         self.embedding_model = None
 
     def load_llm(self, llm_model_source, **llm_kwargs):
         """
-        使用 OpenAI 接口加载 LLM 模型，设置 base_url 指向 VLLM 服务的 LLM API。
+        使用 LangChain VLLM 集成接口加载 LLM 模型
         """
-        from langchain_openai import ChatOpenAI
+        from langchain_community.llms import VLLM
 
-        if not self.vllm_base_url:
-            raise ValueError("VLLM 服务的 base_url 未设置，请在config/__init__.py中添加 VLLM_EMBEDDING_SERVER_BASE_URL")
-        
-        llm_path = os.path.join(f'/download/models/{llm_model_source}')
-        self.llm_model = ChatOpenAI(
-            model=llm_path,
-            openai_api_base=self.vllm_base_url,    # base_url 或 openai_api_base 都可，是 alisa
+        # 获取可用 GPU 数量
+        tensor_parallel_size = len(self.devices)
+
+        self.llm_model = VLLM(
+            model=llm_model_source,
+            tensor_parallel_size=tensor_parallel_size,
+            trust_remote_code=True,  # 适用于需要信任远程代码的 Hugging Face 模型
             **llm_kwargs
         )
 
     def load_embeddings(self, embeddings_model_source, **embeddings_kwargs):
         """
-        使用 OpenAI 接口加载 Embeddings 模型，设置 base_url 指向 VLLM 服务的 Embedding API。
+        暂时使用 huggingface 接口加载 Embeddings 模型。
+
+        参数：
+        - model_source: 模型路径或名称。
+        - kwargs: 其他可选参数，用于传递给 HuggingFaceEmbeddings 方法。
         """
-        from langchain_openai import OpenAIEmbeddings
 
-        if not self.vllm_base_url:
-            raise ValueError("VLLM 服务的 base_url 未设置，请在config/__init__.py中添加 VLLM_EMBEDDING_SERVER_BASE_URL")
+        from langchain_huggingface import HuggingFaceEmbeddings
 
-        embeddings_path = os.path.join(f'/embedding/models/{embeddings_model_source}')
-        self.embedding_model = OpenAIEmbeddings(
-            model=embeddings_path,
-            openai_api_base=self.vllm_base_url,
+        if 'cuda' in self.devices[0]:
+            embedding_device = 0  # 默认使用第一个 GPU 设备
+        elif self.devices == 'cpu':
+            embedding_device = 'cpu'
+        elif self.devices == 'mps':
+            embedding_device = 'mps'
+        else:
+            embedding_device = 'cpu'  # 默认使用 CPU
+
+        # 创建 Embedding 模型
+        self.embedding_model = HuggingFaceEmbeddings(
+            model_name=embeddings_model_source,
+            model_kwargs={'device': embedding_device},
             **embeddings_kwargs
         )
 
@@ -203,14 +209,14 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 class TransformersFramework(InferenceFramework):
-    def __init__(self, device):
+    def __init__(self, devices):
         """
         初始化 Transformers 推理接口。
 
         参数：
         - device: 设备名称，如 'cpu'、'cuda'、'cuda:0'、'mps' 等。
         """
-        self.device = device
+        self.devices = devices
         self.llm_model = None
         self.embedding_model = None
         self.tokenizer = None
@@ -251,16 +257,6 @@ class TransformersFramework(InferenceFramework):
         if not self.tokenizer or not self.model:
             raise ValueError("请先设置 tokenizer 和 model")
 
-        # 不需要 device 参数，accelerate 自动处理
-        # if 'cuda' in self.device:
-        #     device = int(self.device.split(':')[-1])
-        # elif self.device == 'cpu':
-        #     device = -1  # 使用 CPU
-        # elif self.device == 'mps':
-        #     device = self.device
-        # else:
-        #     device = -1  # 默认使用 CPU
-
         generation_pipeline = pipeline(
             "text-generation",
             model=self.model,
@@ -300,11 +296,11 @@ class TransformersFramework(InferenceFramework):
         - model_source: 模型路径或名称。
         - kwargs: 其他可选参数，用于传递给 HuggingFaceEmbeddings 方法。
         """
-        if 'cuda' in self.device:
+        if 'cuda' in self.devices[0]:
             embedding_device = 0  # 默认使用第一个 GPU 设备
-        elif self.device == 'cpu':
+        elif 'cpu' in self.devices:
             embedding_device = 'cpu'
-        elif self.device == 'mps':
+        elif 'mps' in self.devices:
             embedding_device = 'mps'
         else:
             embedding_device = 'cpu'  # 默认使用 CPU
