@@ -75,15 +75,31 @@ def demo(model_type, inference_framework_type, llm_source, embedding_source):
                 # 此处应参考 LLMCore.managers.inference_framework.TransformersFramework.load_llm()方法的注释调用
                 model_loader_interface.load_llm(
                     tokenizer_kwargs={},
-                    model_kwargs={"torch_dtype": "auto", "device_map": "auto", "low_cpu_mem_usage": True},  # 推荐模型加载参数
-                    pipeline_kwargs={"max_new_tokens": 512, "truncation": True}  # 推荐 pipeline 参数
+                    model_kwargs={
+                        "torch_dtype": "auto",
+                        "device_map": "auto",
+                        "low_cpu_mem_usage": True
+                    },  # 推荐模型加载参数
+                    pipeline_kwargs={
+                        "max_new_tokens": 512,  # 控制生成长度
+                        "temperature": 0.7,     # 降低生成随机性
+                        "truncation": True,     # 确保回答不超过最大长度
+                        "repetition_penalty": 1.2,  # 避免重复
+                        # "stop": ["\n"],         # 添加停止标志
+                    }  # 推荐 pipeline 参数
                 )
                 llm = model_loader_interface.get_llm()
                 model_loader_interface.load_embeddings()
                 embeddings = model_loader_interface.get_embeddings()
 
             elif inference_framework_type == 'vllm':
-                model_loader_interface.load_llm()
+                model_loader_interface.load_llm(
+                    max_new_tokens=512,
+                    top_k=10,
+                    top_p=0.9,
+                    temperature=0.7,
+                    repetition_penalty=1.4
+                )
                 llm = model_loader_interface.get_llm()
                 model_loader_interface.load_embeddings()
                 embeddings = model_loader_interface.get_embeddings()
@@ -213,7 +229,7 @@ def main():
     }
 
     # 选择要执行的test
-    selected_test = 'test3'  # 修改这里可以选择不同的test
+    selected_test = 'test4'  # 修改这里可以选择不同的test
 
     # 获取选定的test的参数并调用demo函数
     test_params = test_cases[selected_test]
