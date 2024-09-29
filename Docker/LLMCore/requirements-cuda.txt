@@ -20,3 +20,7 @@ sentence-transformers
 weaviate-client==4.8.1
 # AWQ 量化模型使用库
 autoawq==0.2.6
+
+# 推理库（torch 2.3.1 支持该pip版本，可以源码编译新版试试）
+vllm==0.5.3.post1
+

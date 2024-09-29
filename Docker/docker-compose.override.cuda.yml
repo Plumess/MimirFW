@@ -9,32 +9,7 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
+            - driver: nvidia
+              count: 'all'
+              capabilities: [gpu]
     runtime: ${USE_CUDA:+nvidia}  # 仅在 CUDA 可用时使用 NVIDIA Container Toolkit
-
-# ==============================
-# vLLM 推理后端 搭建
-# ==============================
-  vllm:
-    build:
-      context: vLLM/
-      dockerfile: ${DOCKERFILE_DEVICE}
-      args:
-        max_jobs: 24  # 设置并行编译的最大线程数
-        nvcc_threads: 12  # NVCC 编译时的并行线程数
-        torch_cuda_arch_list: ""  # 构建时让 vLLM 自动检测 GPU 类型
-        RUN_WHEEL_CHECK: "false"  # 关掉！关掉！不然会浪费你人生中的几千秒
-      cache_from:
-        - vllm:${DEVICE}-${VLLM_VERSION}
-    image: vllm:${DEVICE}-${VLLM_VERSION}
-    container_name: vllm
-    volumes:
-      # 动态挂载本地的模型目录到容器内部
-      - ${LLM_MODEL_VOLUME:-../LLMCore/pretrained/models}:/download/models
-      - ${EMBEDDING_MODEL_VOLUME:-../LLMCore/pretrained/embedding}:/download/embedding
-    networks:
-      - mimirnet
-    ports:
-      - 24900:8000
-    restart: unless-stopped
-    command: sleep infinity

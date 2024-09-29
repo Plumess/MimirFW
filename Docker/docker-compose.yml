@@ -59,4 +59,4 @@ networks:
   mimirnet:
     driver: bridge
 
-# ./build.sh
+# ./run.sh
