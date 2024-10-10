@@ -40,6 +40,8 @@
 
 **功能**：作为系统的核心“大脑”，负责生成响应、管理知识库，并适应不同的游戏场景，类似于定制一个 Agent。
 
+![LLMCore_Structure](./assets/LLMCore_Structure.png)
+
 **组件**：
 
 - **基础设定库（Base Setting Library）**：一组预定义的指令和参数，引导LLM在游戏主持人角色中生成合适的输出（例如，“你是一个DND主持人，你需要在获得xxx信息后，输出xxx”）。
