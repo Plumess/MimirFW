@@ -14,12 +14,6 @@ then
     export CUDA_DEVICES=$(nvidia-smi --query-gpu=index --format=csv,noheader | tr '\n' ',')
     # 移除最后一个逗号
     export CUDA_DEVICES="${CUDA_DEVICES%,}"
-else
-    # 检查是否是 Apple M1/M2 芯片（用于 MPS）
-    if [[ "$(uname -s)" == "Darwin" ]] && [[ "$(sysctl -n machdep.cpu.brand_string)" == *"Apple"* ]]
-    then
-        export DEVICE="mps"
-    fi
 fi
 
 # 根据设备类型确定使用的 Dockerfile
@@ -29,18 +23,10 @@ else
     export DOCKERFILE_DEVICE="Dockerfile.$DEVICE"
 fi
 
-echo $DEVICE
-echo $USE_CUDA
-echo $CUDA_DEVICES
-
 # 根据设备类型构建和启动服务
 if [[ "$DEVICE" == "cuda" ]]; then
     docker-compose -f docker-compose.yml -f docker-compose.override.cuda.yml up -d --remove-orphans && docker image prune -f
 elif [[ "$DEVICE" == "cpu" ]]; then
-    docker-compose -f docker-compose.yml -f docker-compose.override.cpu.yml up -d --remove-orphans && docker image prune -f
-elif [[ "$DEVICE" == "mps" ]]; then
-    docker-compose -f docker-compose.yml -f docker-compose.override.mps.yml up -d --remove-orphans && docker image prune -f
-else
     docker-compose up -d --remove-orphans && docker image prune -f
 fi
 
