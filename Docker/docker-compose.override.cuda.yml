@@ -1,0 +1,28 @@
+services:
+# ==============================
+# LLMCore 模块搭建
+# ==============================
+  llmcore:
+    environment:
+      - CUDA_VISIBLE_DEVICES=${USE_CUDA:+${CUDA_DEVICES}}
+    deploy:  # Swarm/Kubernetes
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 'all'
+              capabilities: [gpu]
+    runtime: ${USE_CUDA:+nvidia}  # 仅在 CUDA 可用时使用 NVIDIA Container Toolkit
+
+  vllm-emb:
+    environment:
+      - CUDA_VISIBLE_DEVICES=${USE_CUDA:+${CUDA_DEVICES}}
+    deploy:  # Swarm/Kubernetes
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 'all'
+              capabilities: [gpu]
+    runtime: ${USE_CUDA:+nvidia}  # 仅在 CUDA 可用时使用 NVIDIA Container Toolkit
+    
