@@ -40,6 +40,8 @@
 
 **功能**：作为系统的核心“大脑”，负责生成响应、管理知识库，并适应不同的游戏场景，类似于定制一个 Agent。
 
+![LLMCore_Structure](./assets/LLMCore_Structure.png)
+
 **组件**：
 
 - **基础设定库（Base Setting Library）**：一组预定义的指令和参数，引导LLM在游戏主持人角色中生成合适的输出（例如，“你是一个DND主持人，你需要在获得xxx信息后，输出xxx”）。
@@ -57,10 +59,10 @@
 - **运行时**：在游戏进行过程中，Adapter模块处理外部输入，游戏逻辑模块处理特定的游戏逻辑，并根据需要与LLM核心模块进行交互以生成动态响应。LLM核心模块生成的响应由Adapter模块传递回用户。
 - **自定义**：如果需要引入新游戏或修改现有游戏，仅需更新或替换游戏逻辑模块。LLM核心模块和Adapter模块保持不变，确保系统的稳定性和一致性。
 
-## 4. **代码设计结构树 (暂定设计)**
+## 4. **代码设计结构树 (未完成)**
 
 ```plaintext
-project-root/
+MimirFW/
 │
 ├── Adapter/
 │   ├── __init__.py
@@ -82,11 +84,20 @@ project-root/
 │   └── interaction_handler/
 │
 ├── LLMCore/
-│   ├── __init__.py
-│   ├── base_setting_library/
-│   ├── knowledge_base_manager/
-│   ├── fine_tuning_module/  # 可选
-│   └── response_generator/
+│   ├── managers/
+│   │   ├── inference_framework.py          # 推理后端接口统一封装
+│   │   ├── model_loader.py                 # 模型加载接口统一封装
+│   │
+│   ├── utils/
+│   │   ├── model_selector.py               # 供前端接口使用，枚举可使用模型
+│   │
+│   ├── pretrained/
+│   │   ├── embedding                       # 嵌入模型存放位置
+│   │   ├── models                          # 对话大模型存放位置
+│   │   └── downloader.py                   # 自实现的模型下载器，使用 ModelScope 源
+│   │
+│   ├── demo.py                             # 简易的运行测试
+│   └── README.md
 │
 └── main.py
 ```
