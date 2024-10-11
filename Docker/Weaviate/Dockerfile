@@ -1,7 +1,8 @@
 # ==============================
 # 使用 Weaviate 官方镜像
 # ==============================
-FROM cr.weaviate.io/semitechnologies/weaviate:latest
+ARG WEAVIATE_VERSION
+FROM cr.weaviate.io/semitechnologies/weaviate:${WEAVIATE_VERSION}
 
 # 维护者信息
 LABEL maintainer="Plumess"

@@ -23,9 +23,10 @@ else
     export DOCKERFILE_DEVICE="Dockerfile.$DEVICE"
 fi
 
-# 根据设备类型重构 docker 服务
-if [[ "$DEVICE" == "cuda" ]]; then 
-    docker-compose -f docker-compose.yml -f docker-compose.override.cuda.yml build && docker image prune -f
+# 根据设备类型构建和启动服务
+if [[ "$DEVICE" == "cuda" ]]; then
+    docker-compose -f docker-compose.yml -f docker-compose.override.cuda.yml up -d --remove-orphans && docker image prune -f
 elif [[ "$DEVICE" == "cpu" ]]; then
-    docker-compose build && docker image prune -f
+    docker-compose up -d --remove-orphans && docker image prune -f
 fi
+

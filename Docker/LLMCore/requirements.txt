@@ -1,6 +1,28 @@
-# base
+# LangChain Base
 langchain>=0.3,<0.4
 langchain-community>=0.3,<0.4
 langchain-text-splitters>=0.3,<0.4
 langchain-core>=0.3,<0.4
 langchain-experimental>=0.3,<0.4
+
+# LangChain 额外组件
+langchain-huggingface>=0.1,<0.2
+langchain-weaviate==0.1.0.dev1
+langchain-openai>=0.2,<0.3
+
+# huggingface 模型使用框架
+transformers
+sentence-transformers
+# 向量数据库 weaviate 客户端
+weaviate-client==4.8.1
+# AWQ 量化模型使用库
+autoawq==0.2.6
+
+# cloud llm
+# 阿里云模型服务灵积
+dashscope
+# 境内在线模型下载
+modelscope
+
+# 异步请求
+aiohttp
