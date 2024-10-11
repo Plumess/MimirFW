@@ -1,4 +1,4 @@
-LLMCore/pretrained/embedding
+LLMCore/pretrained/embeddings
 LLMCore/pretrained/models
 LLMCore/logs
 __pycache__

@@ -3,13 +3,15 @@
 *.pptx
 *.docx
 *.pdf
-LLMCore/pretrained/embedding/*
+LLMCore/pretrained/embeddings/*
 LLMCore/pretrained/models/*
 LLMCore/logs/*
 Docker/Weaviate/data/*
 .cache
+.vscode
 __pycache__
 device.env
+!.gitkeep
 
 # Plume ------------------
 assets/plume/*

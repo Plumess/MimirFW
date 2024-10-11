@@ -1,4 +1,4 @@
-from config import PROJECT_ROOT
+from config import *
 import os
 
 def list_models(model_dir):
@@ -15,8 +15,8 @@ def list_models(model_dir):
 
 def get_all_models():
     """获取大模型和embedding模型的信息"""
-    model_dir = os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/models')
-    embedding_dir = os.path.join(PROJECT_ROOT, 'LLMCore/pretrained/embedding')
+    model_dir = os.path.join(PROJECT_ROOT, MODELS_DIR)
+    embedding_dir = os.path.join(PROJECT_ROOT, EMBEDDINGS_DIR)
 
     large_models = list_models(model_dir)
     embedding_models = list_models(embedding_dir)

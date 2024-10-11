@@ -1,6 +1,6 @@
 import os
 from modelscope import snapshot_download
-from config import PROJECT_ROOT
+from config import *
 
 class ModelDownloader:
     def check_exists(self, model_path):
@@ -27,8 +27,8 @@ class ModelDownloader:
         """根据传递的 model_id 和 embedding_id 下载模型和 embedding"""
         
         # 自定义模型和 embedding
-        model_folder = os.path.join(PROJECT_ROOT, "LLMCore/pretrained/models", self.get_model_folder(model_id))
-        embedding_folder = os.path.join(PROJECT_ROOT, "LLMCore/pretrained/embedding", self.get_model_folder(embedding_id))
+        model_folder = os.path.join(PROJECT_ROOT, MODELS_DIR, self.get_model_folder(model_id))
+        embedding_folder = os.path.join(PROJECT_ROOT, EMBEDDINGS_DIR, self.get_model_folder(embedding_id))
 
         # 检查主模型是否存在
         model_exists = self.check_exists(model_folder)
