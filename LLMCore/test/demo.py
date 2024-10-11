@@ -44,7 +44,7 @@ def demo(model_type, inference_framework_type, llm_source, embedding_source):
 
             # 创建模型加载器接口实例 API Version
             model_loader_interface = ModelLoaderInterface(
-                model_type=model_type,                             # 'local' or 'api'
+                model_type=model_type,                             # 'api'
                 inference_framework_type=inference_framework_type  # 'openai', 'qwen'
             )
             # 设置 LLM 和 Embedding 模型标识符
@@ -62,47 +62,20 @@ def demo(model_type, inference_framework_type, llm_source, embedding_source):
         elif model_type == 'local':
             # 创建模型加载器接口实例 Local Version
             model_loader_interface = ModelLoaderInterface(
-                model_type=model_type,                              # 'local' or 'api'
-                inference_framework_type=inference_framework_type,  # 'vllm', 'transformers'
+                model_type=model_type,                              # 'local'
+                inference_framework_type=inference_framework_type,  # 'vllm'
             )
             # 设置 LLM 和 Embedding 模型路径
-            model_loader_interface.set_llm_model_source(os.path.join(PROJECT_ROOT, MODELS_DIR, llm_source))
-            model_loader_interface.set_embedding_model_source(os.path.join(PROJECT_ROOT, EMBEDDINGS_DIR, embedding_source))
+            model_loader_interface.set_llm_model_source(llm_source)
+            model_loader_interface.set_embedding_model_source(embedding_source)
 
-            # 加载模型和 embeddings
-            # 对于本地版本，直接加载模型
-            if inference_framework_type == 'transformers':
-                # 此处应参考 LLMCore.managers.inference_framework.TransformersFramework.load_llm()方法的注释调用
-                model_loader_interface.load_llm(
-                    tokenizer_kwargs={},
-                    model_kwargs={
-                        "torch_dtype": "auto",
-                        "device_map": "auto",
-                        "low_cpu_mem_usage": True
-                    },  # 推荐模型加载参数
-                    pipeline_kwargs={
-                        "max_new_tokens": 512,  # 控制生成长度
-                        "temperature": 0.7,     # 降低生成随机性
-                        "truncation": True,     # 确保回答不超过最大长度
-                        "repetition_penalty": 1.2,  # 避免重复
-                        # "stop": ["\n"],         # 添加停止标志
-                    }  # 推荐 pipeline 参数
-                )
-                llm = model_loader_interface.get_llm()
-                model_loader_interface.load_embeddings()
-                embeddings = model_loader_interface.get_embeddings()
-
-            elif inference_framework_type == 'vllm':
-                model_loader_interface.load_llm(
-                    max_new_tokens=512,
-                    top_k=10,
-                    top_p=0.9,
-                    temperature=0.7,
-                    repetition_penalty=1.4
-                )
-                llm = model_loader_interface.get_llm()
-                model_loader_interface.load_embeddings()
-                embeddings = model_loader_interface.get_embeddings()
+            model_loader_interface.load_llm(
+                max_tokens=512,
+                temperature=0.7,
+            )
+            llm = model_loader_interface.get_llm()
+            model_loader_interface.load_embeddings()
+            embeddings = model_loader_interface.get_embeddings()
 
         print("模型加载完毕。")
         print("=" * 50)
@@ -136,7 +109,7 @@ def demo(model_type, inference_framework_type, llm_source, embedding_source):
 
         # 示例输入
         question = "请介绍一下LangChain的主要功能。"
-        text_path = os.path.join(PROJECT_ROOT, 'LLMCore/test_data.txt')
+        text_path = os.path.join(PROJECT_ROOT, 'LLMCore/test/test_data.txt')
 
         # 5. 检索向量数据库中的内容
         print("检索向量数据库中的相关内容...")
@@ -216,12 +189,6 @@ def main():
         },
         'test3': {
             'model_type': 'local',
-            'inference_framework_type': 'transformers',
-            'llm_source': 'Qwen2.5-7B-Instruct-AWQ',
-            'embedding_source': 'xiaobu-embedding-v2'
-        },
-        'test4': {
-            'model_type': 'local',
             'inference_framework_type': 'vllm',
             'llm_source': 'Qwen2.5-7B-Instruct-AWQ',
             'embedding_source': 'xiaobu-embedding-v2'
@@ -229,7 +196,7 @@ def main():
     }
 
     # 选择要执行的test
-    selected_test = 'test4'  # 修改这里可以选择不同的test
+    selected_test = 'test3'  # 修改这里可以选择不同的test
 
     # 获取选定的test的参数并调用demo函数
     test_params = test_cases[selected_test]
