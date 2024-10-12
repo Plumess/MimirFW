@@ -16,3 +16,4 @@ device.env
 # Plume ------------------
 assets/plume/*
 docs/plume/*
+Helm
