@@ -71,9 +71,8 @@ services:
     volumes:
       - ${LLM_MODEL_VOLUME:-../LLMCore/pretrained/models}:/models
       - ${EMBEDDING_MODEL_VOLUME:-../LLMCore/pretrained/embeddings}:/embeddings
-      # tmp
-      - ./vLLM-Emb/emb:/emb
-      - ./vLLM-Emb/entrypoint_custom.sh:/entrypoint_custom.sh
+      # - ./vLLM-Emb/emb:/emb
+      # - ./vLLM-Emb/entrypoint_custom.sh:/entrypoint_custom.sh
     networks:
       - mimirnet
     entrypoint: ["/bin/bash", "/entrypoint_custom.sh"]
