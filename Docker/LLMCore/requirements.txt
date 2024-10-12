@@ -26,3 +26,6 @@ modelscope
 
 # 异步请求
 aiohttp
+
+# redis
+redis

@@ -81,6 +81,28 @@ services:
       - 24101:${EMB_PORT:-24101}     # 映射嵌入模型服务端口
     restart: unless-stopped
 
+# ==============================
+# redis 后端 搭建
+# ==============================
+  redis:
+    build:
+      context: ../
+      dockerfile: Docker/Redis/Dockerfile
+      args:
+        REDIS_VERSION: ${REDIS_VERSION}
+    image: redis-stack:${REDIS_VERSION}
+    container_name: redis
+    volumes:
+      - ${REDIS_CONFIG_VOLUME:-./Redis/redis.conf}:/usr/local/etc/redis/redis.conf
+    networks:
+      - mimirnet
+    ports:
+      - 24103:6379
+      - 24104:8001
+    restart: unless-stopped
+    env_file:
+      - ./redis/redis.env
+
 networks:
   mimirnet:
     driver: bridge
