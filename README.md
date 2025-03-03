@@ -178,4 +178,4 @@ pass
 - 插件系统兼容MIT协议
 ---
 
-[贡献指南](./docs/CONTRIBUTING.md) | [开发者文档](./docs/DEVELOP.md) | [在线体验](https://demo.mimirfw.chat/)
+[贡献指南](https://www.mimirfw.chat/) | [开发者文档](https://docs.mimirfw.chat/) | [在线体验](https://demo.mimirfw.chat/)
