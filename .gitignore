@@ -1,0 +1,11 @@
+*.bak
+*.log
+*.pptx
+*.docx
+*.pdf
+.cache
+.vscode
+__pycache__
+device.env
+!.gitkeep
+backup/*
