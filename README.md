@@ -40,36 +40,36 @@
         - 希望推广某些大模型云服务API的使用；
 - **适用场景**：
 
-```mermaid
-    graph TD
-    	classDef purpose fill:#4CAF50,stroke:#388E3C,color:white,stroke-width:2px
-        classDef condition fill:#FFC107,stroke:#FFA000,color:black,stroke-width:2px
-        classDef solution fill:#2196F3,stroke:#1976D2,color:white,stroke-width:2px
+    ```mermaid
+        graph TD
+            classDef purpose fill:#4CAF50,stroke:#388E3C,color:white,stroke-width:2px
+            classDef condition fill:#FFC107,stroke:#FFA000,color:black,stroke-width:2px
+            classDef solution fill:#2196F3,stroke:#1976D2,color:white,stroke-width:2px
 
-            P1["🔧 提供特制/优化的大模型"]:::purpose
-            P2["🎮 提供特定游戏服务"]:::purpose
-            P3["☁️ 大模型云服务代理"]:::purpose
-    
-            C1["🏭 拥有GPU计算集群"]:::condition
-            C2["🖥️ 无集群部署能力"]:::condition
-    
-            S1["🚀 云原生高性能部署方案
-            - K8s集群管理
-            - vLLM推理优化
-            - 自动扩缩容"]:::solution
-            S2["🌐 大模型API调用方案
-            - 多厂商API聚合
-            - 智能路由
-            - 用量监控"]:::solution
-    
-            P1 --> C1
-            P1 --> C2
-            P2 --> C1
-            P2 --> C2
-            P3 --> C2
-            C1 --> S1
-            C2 --> S2
-```
+                P1["🔧 提供特制/优化的大模型"]:::purpose
+                P2["🎮 提供特定游戏服务"]:::purpose
+                P3["☁️ 大模型云服务代理"]:::purpose
+        
+                C1["🏭 拥有GPU计算集群"]:::condition
+                C2["🖥️ 无集群部署能力"]:::condition
+        
+                S1["🚀 云原生高性能部署方案
+                - K8s集群管理
+                - vLLM推理优化
+                - 自动扩缩容"]:::solution
+                S2["🌐 大模型API调用方案
+                - 多厂商API聚合
+                - 智能路由
+                - 用量监控"]:::solution
+        
+                P1 --> C1
+                P1 --> C2
+                P2 --> C1
+                P2 --> C2
+                P3 --> C2
+                C1 --> S1
+                C2 --> S2
+    ```
 
 - **适配优势**：
     - 多场景适配的部署模式（本地推理 / 云API）
@@ -86,64 +86,64 @@
     - 您希望作为主机，使用现成/轻松自制的对话类游戏，和朋友组局
 - **适用场景**：
     
-```mermaid
-    graph TD
-    classDef purpose fill:#4CAF50,stroke:#388E3C,color:white,stroke-width:2px
-    classDef condition fill:#FFC107,stroke:#FFA000,color:black,stroke-width:2px
-    classDef solution fill:#2196F3,stroke:#1976D2,color:white,stroke-width:2px
-    classDef official fill:#9C27B0,stroke:#6A1B9A,color:white,stroke-width:2px 
-          
-    		    P1["🎨 低代码游戏设计"]:::purpose
-            P2["🚪 零运维联机开服"]:::purpose
-            P3["🧩 生态扩展能力"]:::purpose
-    
-            C1["💻 本地GPU可用"]:::condition
-            C2["☁️ 纯云端开发"]:::condition
-            C3["🔌 网络访问方案"]:::condition
-            C4["👶 技术新手友好"]:::condition
-            C5["🏢 官方托管支持"]:::condition
-    
-            S1["📦 单卡Docker方案
-            - 一键启动脚本
-            - 资源占用监控
-            - 自动模型下载"]:::solution
-            S2["🌩️ 免配置API方案
-            - 多平台密钥管理
-            - 用量成本看板
-            - 自动降级策略"]:::solution
-            S3["🔧 插件生态
-            - 安全沙箱机制
-            - 热更新支持
-            - 社区排行榜"]:::solution
-            S4["🛡️ 极简联机方案
-            - 内网穿透教程
-            - QQ群Bot集成
-            - 社交平台适配"]:::solution
-            S5["✨ 低代码工具链
-            - 剧情流程图工具
-            - 角色卡生成器
-            - 测试沙盒环境"]:::solution
-            S6["🏛️ 官方公共平台
-            - 托管型开发环境
-            - 跨平台联机服务
-            - 游戏分享平台
-            - 官方插件市场
-            - 统一账户体系"]:::official
-    
-            P1 --> C4
-            P2 --> C1 & C2 & C3 & C5
-            P3 --> C4
-            C1 --> S1
-            C2 --> S2
-            C3 --> S4
-            C4 --> S3 & S5
-            C5 --> S6
-```
+    ```mermaid
+        graph TD
+        classDef purpose fill:#4CAF50,stroke:#388E3C,color:white,stroke-width:2px
+        classDef condition fill:#FFC107,stroke:#FFA000,color:black,stroke-width:2px
+        classDef solution fill:#2196F3,stroke:#1976D2,color:white,stroke-width:2px
+        classDef official fill:#9C27B0,stroke:#6A1B9A,color:white,stroke-width:2px 
+            
+                    P1["🎨 低代码游戏设计"]:::purpose
+                P2["🚪 零运维联机开服"]:::purpose
+                P3["🧩 生态扩展能力"]:::purpose
+        
+                C1["💻 本地GPU可用"]:::condition
+                C2["☁️ 纯云端开发"]:::condition
+                C3["🔌 网络访问方案"]:::condition
+                C4["👶 技术新手友好"]:::condition
+                C5["🏢 官方托管支持"]:::condition
+        
+                S1["📦 单卡Docker方案
+                - 一键启动脚本
+                - 资源占用监控
+                - 自动模型下载"]:::solution
+                S2["🌩️ 免配置API方案
+                - 多平台密钥管理
+                - 用量成本看板
+                - 自动降级策略"]:::solution
+                S3["🔧 插件生态
+                - 安全沙箱机制
+                - 热更新支持
+                - 社区排行榜"]:::solution
+                S4["🛡️ 极简联机方案
+                - 内网穿透教程
+                - QQ群Bot集成
+                - 社交平台适配"]:::solution
+                S5["✨ 低代码工具链
+                - 剧情流程图工具
+                - 角色卡生成器
+                - 测试沙盒环境"]:::solution
+                S6["🏛️ 官方公共平台
+                - 托管型开发环境
+                - 跨平台联机服务
+                - 游戏分享平台
+                - 官方插件市场
+                - 统一账户体系"]:::official
+        
+                P1 --> C4
+                P2 --> C1 & C2 & C3 & C5
+                P3 --> C4
+                C1 --> S1
+                C2 --> S2
+                C3 --> S4
+                C4 --> S3 & S5
+                C5 --> S6
+    ```
     
 - **适配优势**：
-    1. **低代码设计游戏**：通过可视化界面拖拽功能模块
-    2. **一键部署**：选择云服务商（推荐）或本地设备启动实例
-    3. **邀请玩家**：轻松生成专属游戏链接或接入社交平台（QQBot）
+    - **低代码设计游戏**：通过可视化界面拖拽功能模块
+    - **一键部署**：选择云服务商（推荐）或本地设备启动实例
+    - **邀请玩家**：轻松生成专属游戏链接或接入社交平台（QQBot）
     
     > **PS，官方托管支持目前待定，因为个人维护公共服务器的成本还是过高，只能等有钱了再用爱发电了…**
 
