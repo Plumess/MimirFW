@@ -17,8 +17,7 @@
 
 ## 🌐 全平台前端支持方案（规划）
 
-<div style="width:100%; height:auto;">
-<pre class="mermaid">
+```mermaid
     graph TD
         Web["🌐 网页/移动网页"] --> Core
         App["📱 APP（🚧规划中）"] --> Core
@@ -27,8 +26,7 @@
         Core["🎮 Mimir核心引擎"]
         
         style Core fill:#FFC107,stroke:#FFA000,color:black
-</pre>
-</div>
+```
 
 ## 👥 多用户身份支持
 
@@ -41,8 +39,8 @@
         - 希望提供特定对话类游戏服务；
         - 希望推广某些大模型云服务API的使用；
 - **适用场景**：
-    <div style="width:70%; height:auto;">
-    <pre class="mermaid">
+
+```mermaid
     graph TD
     	classDef purpose fill:#4CAF50,stroke:#388E3C,color:white,stroke-width:2px
         classDef condition fill:#FFC107,stroke:#FFA000,color:black,stroke-width:2px
@@ -71,8 +69,7 @@
             P3 --> C2
             C1 --> S1
             C2 --> S2
-    </pre>
-    </div>
+```
 
 - **适配优势**：
     - 多场景适配的部署模式（本地推理 / 云API）
@@ -89,8 +86,7 @@
     - 您希望作为主机，使用现成/轻松自制的对话类游戏，和朋友组局
 - **适用场景**：
     
-    <div style="width:100%; height:auto;">
-    <pre class="mermaid">
+```mermaid
     graph TD
     classDef purpose fill:#4CAF50,stroke:#388E3C,color:white,stroke-width:2px
     classDef condition fill:#FFC107,stroke:#FFA000,color:black,stroke-width:2px
@@ -142,8 +138,7 @@
             C3 --> S4
             C4 --> S3 & S5
             C5 --> S6
-    </pre>
-    </div>
+```
     
 - **适配优势**：
     1. **低代码设计游戏**：通过可视化界面拖拽功能模块
@@ -151,7 +146,6 @@
     3. **邀请玩家**：轻松生成专属游戏链接或接入社交平台（QQBot）
     
     > **PS，官方托管支持目前待定，因为个人维护公共服务器的成本还是过高，只能等有钱了再用爱发电了…**
-    > 
 
 ### 游戏玩家
 
