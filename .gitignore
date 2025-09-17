@@ -54,6 +54,7 @@ yarn-error.log*
 # 模型文件 & 数据
 # ========================================
 models/
+!api/models/
 data/
 *.bin
 *.safetensors
