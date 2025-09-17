@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -x
+
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+cd "$SCRIPT_DIR/.."
+
+# run ruff linter
+uv run --directory api --dev ruff check --fix ./
+
+# run ruff formatter
+uv run --directory api --dev ruff format ./
+
+# run dotenv-linter linter
+uv run --project api --dev dotenv-linter ./api/.env.example
+
+# run mypy check
+dev/mypy-check

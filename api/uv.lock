@@ -534,6 +534,18 @@ wheels = [
 ]
 
 [[package]]
+name = "click-default-group"
+version = "1.2.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1d/ce/edb087fb53de63dad3b36408ca30368f438738098e668b78c87f93cd41df/click_default_group-1.2.4.tar.gz", hash = "sha256:eb3f3c99ec0d456ca6cd2a7f08f7d4e91771bef51b01bdd9580cc6450fe1251e", size = 3505, upload-time = "2023-08-04T07:54:58.425Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2c/1a/aff8bb287a4b1400f69e09a53bd65de96aa5cee5691925b38731c67fc695/click_default_group-1.2.4-py2.py3-none-any.whl", hash = "sha256:9b60486923720e7fc61731bdb32b617039aba820e22e1c88766b1125592eaa5f", size = 4123, upload-time = "2023-08-04T07:54:56.875Z" },
+]
+
+[[package]]
 name = "click-didyoumean"
 version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -706,6 +718,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/91/9b/4a2ea29aeba62471211598dac5d96825bb49348fa07e906ea930394a83ce/docker-7.1.0.tar.gz", hash = "sha256:ad8c70e6e3f8926cb8a92619b832b4ea5299e2831c14284663184e200546fa6c", size = 117834, upload-time = "2024-05-23T11:13:57.216Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e3/26/57c6fb270950d476074c087527a558ccb6f4436657314bfb6cdf484114c4/docker-7.1.0-py3-none-any.whl", hash = "sha256:c96b93b7f0a746f9e77d325bcfb87422a3d8bd4f03136ae8a85b37f1898d5fc0", size = 147774, upload-time = "2024-05-23T11:13:55.01Z" },
+]
+
+[[package]]
+name = "dotenv-linter"
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "click" },
+    { name = "click-default-group" },
+    { name = "ply" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ef/fe/77e184ccc312f6263cbcc48a9579eec99f5c7ff72a9b1bd7812cafc22bbb/dotenv_linter-0.5.0.tar.gz", hash = "sha256:4862a8393e5ecdfb32982f1b32dbc006fff969a7b3c8608ba7db536108beeaea", size = 15346, upload-time = "2024-03-13T11:52:10.52Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f0/01/62ed4374340e6cf17c5084828974d96db8085e4018439ac41dc3cbbbcab3/dotenv_linter-0.5.0-py3-none-any.whl", hash = "sha256:fd01cca7f2140cb1710f49cbc1bf0e62397a75a6f0522d26a8b9b2331143c8bd", size = 21770, upload-time = "2024-03-13T11:52:08.607Z" },
 ]
 
 [[package]]
@@ -1693,6 +1721,7 @@ dependencies = [
 dev = [
     { name = "celery-types" },
     { name = "coverage" },
+    { name = "dotenv-linter" },
     { name = "faker" },
     { name = "mypy" },
     { name = "pytest" },
@@ -1702,8 +1731,15 @@ dev = [
     { name = "pytest-mock" },
     { name = "ruff" },
     { name = "testcontainers" },
+    { name = "types-colorama" },
+    { name = "types-deprecated" },
+    { name = "types-docutils" },
     { name = "types-flask-cors" },
     { name = "types-flask-migrate" },
+    { name = "types-gevent" },
+    { name = "types-greenlet" },
+    { name = "types-psutil" },
+    { name = "types-pygments" },
     { name = "types-pyyaml" },
     { name = "types-redis" },
     { name = "types-requests" },
@@ -1783,6 +1819,7 @@ requires-dist = [
 dev = [
     { name = "celery-types", specifier = ">=0.23.0" },
     { name = "coverage", specifier = "~=7.2.4" },
+    { name = "dotenv-linter", specifier = "~=0.5.0" },
     { name = "faker", specifier = "~=32.1.0" },
     { name = "mypy", specifier = "~=1.17.1" },
     { name = "pytest", specifier = "~=8.3.2" },
@@ -1792,8 +1829,15 @@ dev = [
     { name = "pytest-mock", specifier = "~=3.14.0" },
     { name = "ruff", specifier = "~=0.12.3" },
     { name = "testcontainers", specifier = "~=4.10.0" },
+    { name = "types-colorama", specifier = ">=0.4.15.20250801" },
+    { name = "types-deprecated", specifier = ">=1.2.15.20250304" },
+    { name = "types-docutils", specifier = ">=0.22.0.20250914" },
     { name = "types-flask-cors", specifier = "~=5.0.0" },
     { name = "types-flask-migrate", specifier = "~=4.1.0" },
+    { name = "types-gevent", specifier = ">=25.4.0.20250915" },
+    { name = "types-greenlet", specifier = ">=3.2.0.20250915" },
+    { name = "types-psutil", specifier = ">=7.0.0.20250822" },
+    { name = "types-pygments", specifier = ">=2.19.0.20250809" },
     { name = "types-pyyaml", specifier = "~=6.0.12" },
     { name = "types-redis", specifier = ">=4.6.0.20241004" },
     { name = "types-requests", specifier = "~=2.32.0" },
@@ -2481,6 +2525,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+]
+
+[[package]]
+name = "ply"
+version = "3.11"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/69/882ee5c9d017149285cab114ebeab373308ef0f874fcdac9beb90e0ac4da/ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3", size = 159130, upload-time = "2018-02-15T19:01:31.097Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a3/58/35da89ee790598a0700ea49b2a66594140f44dec458c07e8e3d4979137fc/ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce", size = 49567, upload-time = "2018-02-15T19:01:27.172Z" },
 ]
 
 [[package]]
@@ -3640,6 +3693,33 @@ wheels = [
 ]
 
 [[package]]
+name = "types-colorama"
+version = "0.4.15.20250801"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/99/37/af713e7d73ca44738c68814cbacf7a655aa40ddd2e8513d431ba78ace7b3/types_colorama-0.4.15.20250801.tar.gz", hash = "sha256:02565d13d68963d12237d3f330f5ecd622a3179f7b5b14ee7f16146270c357f5", size = 10437, upload-time = "2025-08-01T03:48:22.605Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/95/3a/44ccbbfef6235aeea84c74041dc6dfee6c17ff3ddba782a0250e41687ec7/types_colorama-0.4.15.20250801-py3-none-any.whl", hash = "sha256:b6e89bd3b250fdad13a8b6a465c933f4a5afe485ea2e2f104d739be50b13eea9", size = 10743, upload-time = "2025-08-01T03:48:21.774Z" },
+]
+
+[[package]]
+name = "types-deprecated"
+version = "1.2.15.20250304"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0e/67/eeefaaabb03b288aad85483d410452c8bbcbf8b2bd876b0e467ebd97415b/types_deprecated-1.2.15.20250304.tar.gz", hash = "sha256:c329030553029de5cc6cb30f269c11f4e00e598c4241290179f63cda7d33f719", size = 8015, upload-time = "2025-03-04T02:48:17.894Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/e3/c18aa72ab84e0bc127a3a94e93be1a6ac2cb281371d3a45376ab7cfdd31c/types_deprecated-1.2.15.20250304-py3-none-any.whl", hash = "sha256:86a65aa550ea8acf49f27e226b8953288cd851de887970fbbdf2239c116c3107", size = 8553, upload-time = "2025-03-04T02:48:16.666Z" },
+]
+
+[[package]]
+name = "types-docutils"
+version = "0.22.0.20250914"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/72/48cad115dff86755d83bbb37eb70df2d26a1fb2d8b5e1725d6524e0f08a4/types_docutils-0.22.0.20250914.tar.gz", hash = "sha256:0c7f61c90ed2900fa5c8e6cd375222981be1e28240b8c8a67ca4a186e367618d", size = 56496, upload-time = "2025-09-14T02:56:04.766Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/7b/ddf2a291e5145d8abe3bf8e264b232b8bd9c6865121257dfd43079ce9b6d/types_docutils-0.22.0.20250914-py3-none-any.whl", hash = "sha256:f1eec1a6024feef6560688fd9525ff888b95866cecb685e0a68bd095e817b00a", size = 91784, upload-time = "2025-09-14T02:56:03.449Z" },
+]
+
+[[package]]
 name = "types-flask-cors"
 version = "5.0.0.20250413"
 source = { registry = "https://pypi.org/simple" }
@@ -3662,6 +3742,49 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d5/d1/d11799471725b7db070c4f1caa3161f556230d4fb5dad76d23559da1be4d/types_flask_migrate-4.1.0.20250809.tar.gz", hash = "sha256:fdf97a262c86aca494d75874a2374e84f2d37bef6467d9540fa3b054b67db04e", size = 8636, upload-time = "2025-08-09T03:17:03.957Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b4/53/f5fd40fb6c21c1f8e7da8325f3504492d027a7921d5c80061cd434c3a0fc/types_flask_migrate-4.1.0.20250809-py3-none-any.whl", hash = "sha256:92ad2c0d4000a53bf1e2f7813dd067edbbcc4c503961158a763e2b0ae297555d", size = 8648, upload-time = "2025-08-09T03:17:02.952Z" },
+]
+
+[[package]]
+name = "types-gevent"
+version = "25.4.0.20250915"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "types-greenlet" },
+    { name = "types-psutil" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ac/71/fb4cef272608232ba0925a5095447fd39babf532f44b33d13af615733f79/types_gevent-25.4.0.20250915.tar.gz", hash = "sha256:9681f5dccc6b1f2a60c726da3c48494a6aa6f0e05a638fdfb0cf944e13a8265a", size = 38037, upload-time = "2025-09-15T03:01:33.158Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0c/f5/52e8298b16570f9d78ab309baa98ad082189f0883550f66f86eaa13c2c0a/types_gevent-25.4.0.20250915-py3-none-any.whl", hash = "sha256:a0d8a51d04557ac2e9e20e627ad5672f8ccdd8c84ee16b7e7f4dd02888801b2d", size = 55522, upload-time = "2025-09-15T03:01:31.808Z" },
+]
+
+[[package]]
+name = "types-greenlet"
+version = "3.2.0.20250915"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/d7/a76e2cb6fdbc2ecaf37a330fe3168d8d89c5f64b939da78fc62c89febab5/types_greenlet-3.2.0.20250915.tar.gz", hash = "sha256:831a390b1d4789b173b067ac546a4024fa9c43825db9f66194916dd0c85e3925", size = 8861, upload-time = "2025-09-15T03:01:18.104Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ae/dd/4fe5803ea70ceada70746d9e90045d673a49093907c7a6108650de59d257/types_greenlet-3.2.0.20250915-py3-none-any.whl", hash = "sha256:59c8866b6ef8b1c62e289c01c90c8544aef37c610bfa13f93099d992327ae1c7", size = 8809, upload-time = "2025-09-15T03:01:17.327Z" },
+]
+
+[[package]]
+name = "types-psutil"
+version = "7.0.0.20250822"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/aa/09699c829d7cc4624138d3ae67eecd4de9574e55729b1c63ca3e5a657f86/types_psutil-7.0.0.20250822.tar.gz", hash = "sha256:226cbc0c0ea9cc0a50b8abcc1d91a26c876dcb40be238131f697883690419698", size = 20358, upload-time = "2025-08-22T03:02:04.556Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7d/46/45006309e20859e12c024d91bb913e6b89a706cd6f9377031c9f7e274ece/types_psutil-7.0.0.20250822-py3-none-any.whl", hash = "sha256:81c82f01aba5a4510b9d8b28154f577b780be75a08954aed074aa064666edc09", size = 23110, upload-time = "2025-08-22T03:02:03.38Z" },
+]
+
+[[package]]
+name = "types-pygments"
+version = "2.19.0.20250809"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "types-docutils" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/51/1b/a6317763a8f2de01c425644273e5fbe3145d648a081f3bad590b3c34e000/types_pygments-2.19.0.20250809.tar.gz", hash = "sha256:01366fd93ef73c792e6ee16498d3abf7a184f1624b50b77f9506a47ed85974c2", size = 18454, upload-time = "2025-08-09T03:17:14.322Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8d/c4/d9f0923a941159664d664a0b714242fbbd745046db2d6c8de6fe1859c572/types_pygments-2.19.0.20250809-py3-none-any.whl", hash = "sha256:8e813e5fc25f741b81cadc1e181d402ebd288e34a9812862ddffee2f2b57db7c", size = 25407, upload-time = "2025-08-09T03:17:13.223Z" },
 ]
 
 [[package]]

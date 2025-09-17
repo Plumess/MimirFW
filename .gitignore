@@ -16,6 +16,7 @@
 # 开发环境
 # ========================================
 .vscode/
+.cursor/
 __pycache__/
 .pytest_cache
 *.py[cod]
