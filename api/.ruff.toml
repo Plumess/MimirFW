@@ -1,0 +1,136 @@
+# Ruff 配置文件
+
+# 排除的文件和目录
+exclude = [
+    ".git",
+    ".venv", 
+    "__pycache__",
+    "build",
+    "dist",
+    "migrations/*",
+    "tests/fixtures/*",
+]
+
+# 每行最大字符数
+line-length = 120
+
+# 目标 Python 版本
+target-version = "py311"
+
+[format]
+# 格式化配置
+quote-style = "double"
+
+[lint]
+# 预览功能
+preview = false
+
+# 启用的规则集
+select = [
+    "B",       # flake8-bugbear rules
+    "C4",      # flake8-comprehensions
+    "E",       # pycodestyle E rules
+    "F",       # pyflakes rules
+    "FURB",    # refurb rules
+    "I",       # isort rules
+    "N",       # pep8-naming
+    "PT",      # flake8-pytest-style rules
+    "PLC0208", # iteration-over-set
+    "PLC0414", # useless-import-alias
+    "PLE0604", # invalid-all-object
+    "PLE0605", # invalid-all-format
+    "PLR0402", # manual-from-import
+    "PLR1711", # useless-return
+    "PLR1714", # repeated-equality-comparison
+    "RUF013",  # implicit-optional
+    "RUF019",  # unnecessary-key-check
+    "RUF100",  # unused-noqa
+    "RUF101",  # redirected-noqa
+    "RUF200",  # invalid-pyproject-toml
+    "RUF022",  # unsorted-dunder-all
+    "S506",    # unsafe-yaml-load
+    "SIM",     # flake8-simplify rules
+    "TRY400",  # error-instead-of-exception
+    "TRY401",  # verbose-log-message
+    "UP",      # pyupgrade rules
+    "W191",    # tab-indentation
+    "W605",    # invalid-escape-sequence
+    
+    # 安全相关规则
+    "S102",    # exec-builtin, 禁止使用 `exec`
+    "S307",    # suspicious-eval-usage, 禁止使用 `eval`
+    "S301",    # suspicious-pickle-usage, 禁止使用 `pickle`
+    "S302",    # suspicious-marshal-usage, 禁止使用 `marshal`
+    "S311",    # suspicious-non-cryptographic-random-usage
+    
+    # 日志格式规则
+    "G001",    # don't use str format to logging messages
+    "G003",    # don't use + in logging messages
+    "G004",    # don't use f-strings to format logging messages
+]
+
+# 忽略的规则
+ignore = [
+    "E402",    # module-import-not-at-top-of-file
+    "E711",    # none-comparison
+    "E712",    # true-false-comparison
+    "E721",    # type-comparison
+    "E722",    # bare-except
+    "F821",    # undefined-name
+    "F841",    # unused-variable
+    "FURB113", # repeated-append
+    "FURB152", # math-constant
+    "UP007",   # non-pep604-annotation
+    "UP032",   # f-string
+    "UP045",   # non-pep604-annotation-optional
+    "B005",    # strip-with-multi-characters
+    "B006",    # mutable-argument-default
+    "B007",    # unused-loop-control-variable
+    "B026",    # star-arg-unpacking-after-keyword-arg
+    "B903",    # class-as-data-structure
+    "B904",    # raise-without-from-inside-except
+    "B905",    # zip-without-explicit-strict
+    "N806",    # non-lowercase-variable-in-function
+    "N815",    # mixed-case-variable-in-class-scope
+    "PT011",   # pytest-raises-too-broad
+    "SIM102",  # collapsible-if
+    "SIM103",  # needless-bool
+    "SIM105",  # suppressible-exception
+    "SIM107",  # return-in-try-except-finally
+    "SIM108",  # if-else-block-instead-of-if-exp
+    "SIM113",  # enumerate-for-loop
+    "SIM117",  # multiple-with-statements
+    "SIM210",  # if-expr-with-true-false
+    "UP038",   # deprecated and not recommended by Ruff
+]
+
+# 每个文件的特定忽略规则
+[lint.per-file-ignores]
+"__init__.py" = [
+    "F401", # unused-import
+    "F811", # redefined-while-unused
+]
+"configs/*" = [
+    "N802", # invalid-function-name
+]
+"tests/*" = [
+    "F811", # redefined-while-unused
+]
+
+# Pyflakes 配置
+[lint.pyflakes]
+allowed-unused-imports = [
+    "_pytest.monkeypatch",
+    "tests.integration_tests",
+    "tests.unit_tests",
+]
+
+# isort 配置
+[lint.isort]
+force-single-line = false
+known-first-party = ["core", "services", "controllers", "models", "configs", "libs", "entities"]
+known-third-party = ["flask", "sqlalchemy", "celery", "redis", "openai", "pydantic"]
+
+# pyupgrade 配置
+[lint.pyupgrade]
+keep-runtime-typing = true 
