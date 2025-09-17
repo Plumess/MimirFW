@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
 class RedisClientWrapper:
     """
     Redis 客户端包装器
-    
+
     解决全局 `redis_client` 变量无法在 Sentinel 返回新 Redis 实例时更新的问题。
-    
+
     该类允许延迟初始化 Redis 客户端，使客户端能够在必要时重新初始化新实例。
     这在 Redis 实例可能动态变化的场景中特别有用，比如 Sentinel 管理的 Redis 设置中的故障转移。
     """
@@ -153,10 +153,7 @@ def _create_sentinel_client(redis_params: dict[str, Any]) -> Union[redis.Redis, 
     if not mimir_config.REDIS_SENTINEL_SERVICE_NAME:
         raise ValueError("REDIS_SENTINEL_SERVICE_NAME must be set when REDIS_USE_SENTINEL is True")
 
-    sentinel_hosts = [
-        (node.split(":")[0], int(node.split(":")[1])) 
-        for node in mimir_config.REDIS_SENTINELS.split(",")
-    ]
+    sentinel_hosts = [(node.split(":")[0], int(node.split(":")[1])) for node in mimir_config.REDIS_SENTINELS.split(",")]
 
     sentinel = Sentinel(
         sentinel_hosts,
@@ -231,7 +228,7 @@ def init_app(app: "Flask") -> None:
 def redis_fallback(default_return: Optional[Any] = None) -> Callable:
     """
     装饰器，用于处理 Redis 操作异常并在 Redis 不可用时返回默认值
-    
+
     Args:
         default_return: Redis 操作失败时返回的值。默认为 None。
     """

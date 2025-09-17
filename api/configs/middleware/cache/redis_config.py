@@ -1,16 +1,18 @@
 """
 Redis 缓存配置
+
+包含 Redis 连接、认证、SSL、哨兵、集群等配置
 """
 
 from typing import Optional
 
-from pydantic import Field, NonNegativeInt, PositiveFloat, PositiveInt, computed_field
+from pydantic import Field, NonNegativeInt, PositiveFloat, PositiveInt
 from pydantic_settings import BaseSettings
 
 
 class RedisConfig(BaseSettings):
     """
-    Redis 连接配置
+    Redis 连接配置设置
     """
 
     REDIS_HOST: str = Field(
@@ -44,22 +46,22 @@ class RedisConfig(BaseSettings):
     )
 
     REDIS_SSL_CERT_REQS: str = Field(
-        description="SSL 证书要求（CERT_NONE, CERT_OPTIONAL, CERT_REQUIRED）",
+        description="SSL 证书要求（CERT_NONE、CERT_OPTIONAL、CERT_REQUIRED）",
         default="CERT_NONE",
     )
 
     REDIS_SSL_CA_CERTS: Optional[str] = Field(
-        description="用于 SSL 验证的 CA 证书文件路径",
+        description="SSL 验证的 CA 证书文件路径",
         default=None,
     )
 
     REDIS_SSL_CERTFILE: Optional[str] = Field(
-        description="用于 SSL 认证的客户端证书文件路径",
+        description="SSL 认证的客户端证书文件路径",
         default=None,
     )
 
     REDIS_SSL_KEYFILE: Optional[str] = Field(
-        description="用于 SSL 认证的客户端私钥文件路径",
+        description="SSL 认证的客户端私钥文件路径",
         default=None,
     )
 
@@ -69,7 +71,7 @@ class RedisConfig(BaseSettings):
     )
 
     REDIS_SENTINELS: Optional[str] = Field(
-        description="Redis Sentinel 节点列表（host:port），逗号分隔",
+        description="Redis Sentinel 节点列表，逗号分隔（host:port）",
         default=None,
     )
 
@@ -94,17 +96,17 @@ class RedisConfig(BaseSettings):
     )
 
     REDIS_USE_CLUSTERS: bool = Field(
-        description="启用 Redis Clusters 模式以实现高可用性",
+        description="启用 Redis 集群模式以实现高可用性",
         default=False,
     )
 
     REDIS_CLUSTERS: Optional[str] = Field(
-        description="Redis Clusters 节点列表（host:port），逗号分隔",
+        description="Redis 集群节点列表，逗号分隔（host:port）",
         default=None,
     )
 
     REDIS_CLUSTERS_PASSWORD: Optional[str] = Field(
-        description="Redis Clusters 认证密码（如果需要）",
+        description="Redis 集群认证密码（如果需要）",
         default=None,
     )
 
@@ -117,16 +119,3 @@ class RedisConfig(BaseSettings):
         description="在 Redis 中启用客户端缓存",
         default=False,
     )
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def REDIS_URL(self) -> str:
-        """动态生成 Redis URL"""
-        auth = ""
-        if self.REDIS_USERNAME and self.REDIS_PASSWORD:
-            auth = f"{self.REDIS_USERNAME}:{self.REDIS_PASSWORD}@"
-        elif self.REDIS_PASSWORD:
-            auth = f":{self.REDIS_PASSWORD}@"
-
-        scheme = "rediss" if self.REDIS_USE_SSL else "redis"
-        return f"{scheme}://{auth}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"

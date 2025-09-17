@@ -27,7 +27,7 @@ _GEVENT_COMPATIBILITY_SETUP: bool = False
 def _safe_rollback(connection: Any) -> None:
     """
     安全地回滚数据库连接
-    
+
     Args:
         connection: 数据库连接对象
     """
@@ -40,17 +40,17 @@ def _safe_rollback(connection: Any) -> None:
 def _setup_gevent_compatibility() -> None:
     """设置 gevent 兼容性"""
     global _GEVENT_COMPATIBILITY_SETUP
-    
+
     # 避免重复注册
     if _GEVENT_COMPATIBILITY_SETUP:
         return
-    
+
     @event.listens_for(Pool, "reset")
     def _safe_reset(dbapi_connection: Any, connection_record: Any, reset_state: Any) -> None:
         """安全重置连接池"""
         if reset_state.terminate_only:
             return
-        
+
         # 安全回滚连接
         try:
             hub = gevent.get_hub()
@@ -60,22 +60,22 @@ def _setup_gevent_compatibility() -> None:
                 _safe_rollback(dbapi_connection)
         except (AttributeError, ImportError):
             _safe_rollback(dbapi_connection)
-    
+
     _GEVENT_COMPATIBILITY_SETUP = True
 
 
 def init_app(app: "Flask") -> None:
     """
     初始化数据库扩展
-    
+
     Args:
         app: Flask 应用实例
     """
-    
+
     # 直接初始化数据库
     db.init_app(app)
-    
+
     # 设置 gevent 兼容性
     _setup_gevent_compatibility()
-    
+
     logger.info("Database extension initialized")

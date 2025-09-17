@@ -24,7 +24,7 @@ def create_flask_app_with_configs() -> Flask:
     app = Flask(__name__)
     # 关键：将所有配置设置到 Flask 的 app.config 中
     app.config.from_mapping(mimir_config.model_dump())
-    
+
     return app
 
 
@@ -49,15 +49,15 @@ def initialize_extensions(app: Flask) -> None:
         ext_logging,
         ext_redis,
     )
-    
+
     # 按顺序加载扩展
     extensions = [
-        ext_logging,      # 先初始化日志（待开发）
-        ext_database,     # 数据库
-        ext_redis,        # Redis
-        ext_celery,       # Celery（待开发）
+        ext_logging,  # 先初始化日志（待开发）
+        ext_database,  # 数据库
+        ext_redis,  # Redis
+        ext_celery,  # Celery（待开发）
     ]
-    
+
     for ext in extensions:
         short_name = ext.__name__.split(".")[-1]
         is_enabled = ext.is_enabled() if hasattr(ext, "is_enabled") else True
@@ -75,46 +75,46 @@ def initialize_extensions(app: Flask) -> None:
 
 def register_blueprints(app: Flask) -> None:
     """注册蓝图 - 配置驱动"""
-    
+
     # 基础健康检查端点 - 配置驱动
     @app.route("/health")
     def health_check() -> dict[str, Any]:
         return {
-            "status": "healthy", 
+            "status": "healthy",
             "service": mimir_config.APPLICATION_NAME.lower(),
-            "version": mimir_config.VERSION,
-            "environment": mimir_config.DEPLOY_ENV
+            "version": mimir_config.project.version,
+            "environment": mimir_config.DEPLOY_ENV,
         }
-    
+
     # 根端点 - 配置驱动
     @app.route("/")
     def root() -> dict[str, Any]:
         return {
             "service": f"{mimir_config.APPLICATION_NAME} API",
-            "version": mimir_config.VERSION,
-            "description": mimir_config.DESCRIPTION,
+            "version": mimir_config.project.version,
+            "description": mimir_config.project.description,
             "status": "running",
             "environment": mimir_config.DEPLOY_ENV,
-            "debug": mimir_config.DEBUG
+            "debug": mimir_config.DEBUG,
         }
-    
+
     # 注册错误处理器 - 配置驱动
     @app.errorhandler(404)
     def not_found(error: "HTTPException") -> tuple[dict[str, Any], int]:
         return {
-            "error": "Not Found", 
+            "error": "Not Found",
             "message": "The requested resource was not found",
             "service": mimir_config.APPLICATION_NAME,
-            "version": mimir_config.VERSION
+            "version": mimir_config.project.version,
         }, 404
-    
+
     @app.errorhandler(500)
     def internal_error(error: "HTTPException") -> tuple[dict[str, Any], int]:
         return {
-            "error": "Internal Server Error", 
+            "error": "Internal Server Error",
             "message": "An internal error occurred",
             "service": mimir_config.APPLICATION_NAME,
-            "version": mimir_config.VERSION
+            "version": mimir_config.project.version,
         }, 500
 
 
@@ -122,8 +122,8 @@ def create_migrations_app() -> Flask:
     """创建迁移应用"""
     app = create_flask_app_with_configs()
     from extensions import ext_database
-    
+
     # 只初始化必需的扩展
     ext_database.init_app(app)
-    
+
     return app

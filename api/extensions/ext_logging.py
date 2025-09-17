@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 def init_app(app: "Flask") -> None:
     """
     初始化日志扩展 - 待开发
-    
+
     Args:
         app: Flask 应用实例
     """

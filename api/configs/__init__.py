@@ -1,12 +1,11 @@
 """
-MimirFW 配置模块
+MimirFW 配置系统
 
-完全模仿 Dify 的配置导入方式
+采用分层模块化配置管理
 """
 
-from .app_config import MimirConfig, mimir_config
+from .app_config import MimirConfig
 
-__all__ = [
-    "MimirConfig",
-    "mimir_config",
-]
+mimir_config = MimirConfig()
+
+__all__ = ["MimirConfig", "mimir_config"]

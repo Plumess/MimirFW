@@ -203,7 +203,7 @@ api/
 │   │   ├── base.py          # 审核基类
 │   │   ├── factory.py       # 审核工厂
 │   │   └── entities/        # 审核实体
-│   ├── plugin/              # 插件系统（后续开发）
+│   ├── plugin/              # 插件系统
 │   │   ├── backwards_invocation/ # 向后兼容调用
 │   │   ├── endpoint/        # 插件端点管理
 │   │   ├── security/        # 插件安全机制
@@ -334,7 +334,7 @@ api/
 │   ├── inventory.py        # 物品模型
 │   ├── tool.py             # 工具模型
 │   ├── knowledge.py        # 知识库模型
-│   ├── plugin.py           # 插件模型（后续开发）
+│   ├── plugin.py           # 插件模型
 │   ├── trace.py            # 追踪模型
 │   └── billing.py          # 计费模型（企业级目标，后续开发）
 ├── repositories/            # 数据访问层
@@ -541,7 +541,7 @@ class WorkflowEngine:
 - **反作弊系统**：作弊行为识别和防护
 - **滥用检测**：系统滥用和攻击检测
 
-#### `core/plugin/` - 插件扩展系统（后续开发）
+#### `core/plugin/` - 插件扩展系统
 
 为生态扩展预留的插件系统：
 

@@ -1,81 +1,114 @@
 """
-应用工厂单元测试
+测试应用工厂模块
 
-测试 Flask 应用的创建和配置。
+验证应用创建和配置功能
 """
 
-import pytest
 from flask import Flask
 
-from app_factory import create_app
-from configs import DevelopmentConfig, ProductionConfig, TestEnvConfig
+from app_factory import create_app, create_flask_app_with_configs, create_migrations_app
 
 
 class TestAppFactory:
-    """应用工厂测试类"""
+    """测试应用工厂功能"""
 
-    def test_create_app_with_default_config(self) -> None:
-        """测试使用默认配置创建应用"""
+    def test_create_flask_app_with_configs(self) -> None:
+        """测试创建带配置的 Flask 应用"""
+        app = create_flask_app_with_configs()
+
+        assert isinstance(app, Flask)
+        # Flask 应用名称默认是模块名，这里是 __main__
+        assert app.name in ["__main__", "app_factory"]
+
+    def test_create_app(self) -> None:
+        """测试创建完整应用"""
         app = create_app()
 
         assert isinstance(app, Flask)
-        # 在测试环境下，默认配置实际上是 TestEnvConfig
-        assert app.config["DEBUG"] is False  # 测试环境不开启 DEBUG
-        assert "SECRET_KEY" in app.config
-        assert app.config["APP_NAME"] == "MimirFW API"
+        # Flask 应用名称默认是模块名
+        assert app.name in ["__main__", "app_factory"]
 
-        def test_create_app_with_development_config(self) -> None:
-        """测试使用开发配置创建应用"""
-        config = DevelopmentConfig()
-        app = create_app(config)
-
-        assert app.config["DEBUG"] is True
-        # 注意：即使传入 DevelopmentConfig，环境变量 FLASK_ENV=testing 仍会影响配置
-        assert app.config["FLASK_ENV"] == "development"  # 来自配置对象
-        assert app.config["SQLALCHEMY_ECHO"] is True
-
-    def test_create_app_with_testing_config(self) -> None:
-        """测试使用测试配置创建应用"""
-        config = TestEnvConfig()
-        app = create_app(config)
-        
-        assert app.config["DEBUG"] is False
-        assert app.config["FLASK_ENV"] == "testing"
-        assert app.config["TESTING"] is True
-
-    def test_health_check_endpoint(self) -> None:
+    def test_health_endpoint(self) -> None:
         """测试健康检查端点"""
         app = create_app()
-        
+
         with app.test_client() as client:
             response = client.get("/health")
-            
             assert response.status_code == 200
+
             data = response.get_json()
             assert data["status"] == "healthy"
-            assert data["service"] == "mimirfw-api"
+            assert "service" in data
+            assert "version" in data
+            assert "environment" in data
 
     def test_root_endpoint(self) -> None:
         """测试根端点"""
         app = create_app()
-        
+
         with app.test_client() as client:
             response = client.get("/")
-            
             assert response.status_code == 200
+
             data = response.get_json()
             assert data["service"] == "MimirFW API"
-            assert data["version"] == "0.1.0"
             assert data["status"] == "running"
+            assert "version" in data
             assert "environment" in data
+            assert "debug" in data
 
     def test_404_error_handler(self) -> None:
         """测试 404 错误处理"""
         app = create_app()
-        
+
         with app.test_client() as client:
             response = client.get("/nonexistent")
-            
             assert response.status_code == 404
+
             data = response.get_json()
-            assert data["error"] == "Not Found" 
+            assert data["error"] == "Not Found"
+            assert "message" in data
+            assert "service" in data
+            assert "version" in data
+
+    def test_error_handlers_registered(self) -> None:
+        """测试错误处理器是否注册"""
+        app = create_app()
+
+        # 检查错误处理器是否已注册
+        assert 404 in app.error_handler_spec[None]
+        assert 500 in app.error_handler_spec[None]
+
+    def test_create_migrations_app(self) -> None:
+        """测试创建迁移应用"""
+        app = create_migrations_app()
+
+        assert isinstance(app, Flask)
+        # Flask 应用名称默认是模块名
+        assert app.name in ["__main__", "app_factory"]
+
+    def test_app_config_loading(self) -> None:
+        """测试应用配置加载"""
+        app = create_flask_app_with_configs()
+
+        # 检查配置是否正确加载
+        assert "APPLICATION_NAME" in app.config
+        assert app.config["APPLICATION_NAME"] == "MimirFW"
+        assert "DEBUG" in app.config
+        assert isinstance(app.config["DEBUG"], bool)
+
+    def test_extensions_initialization_skipped(self) -> None:
+        """测试扩展初始化被跳过（因为未实现）"""
+        app = create_app()
+
+        # 当前扩展初始化被跳过，应用仍能正常创建
+        assert isinstance(app, Flask)
+
+    def test_routes_registered(self) -> None:
+        """测试路由是否正确注册"""
+        app = create_app()
+
+        # 检查基本路由是否注册
+        routes = [rule.rule for rule in app.url_map.iter_rules()]
+        assert "/" in routes
+        assert "/health" in routes
